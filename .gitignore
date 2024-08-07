@@ -43,3 +43,4 @@ msbuild.err
 msbuild.wrn
 
 .fake
+.aider*
