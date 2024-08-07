@@ -5,5 +5,6 @@ open SimpleRssServer.Request
 
 [<Fact>]
 let ``Test getRequestInfo`` () =
-    let result = getRequestInfo()
-    Assert.Equal("Request Info", result)
+    let result = getRssUrls "?rss=https://abs.com/test"
+
+    Assert.Equal(Some ["https://abs.com/test"], result)

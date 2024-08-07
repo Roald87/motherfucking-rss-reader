@@ -6,12 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Program.fs" />
     <Compile Include="Request.fs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\SimpleRssServer.Tests\SimpleRssServer.Tests.fsproj" />
+    <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>

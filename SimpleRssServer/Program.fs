@@ -1,7 +1,5 @@
-﻿open System
-open System.Net
+﻿open System.Net
 open System.Text
-open System.Threading.Tasks
 open FSharp.Data
 
 type Rss = XmlProvider<"https://roaldin.ch/feed.xml">
@@ -14,14 +12,7 @@ let fetchRssFeed (url: string) =
 
 let handleRequest (context: HttpListenerContext) =
     async {
-        let query = context.Request.Url.Query
-        let rssUrl = 
-            if query.StartsWith("?rss=") then
-                query.Substring(5)
-            else
-                "https://roaldin.ch/feed.xml"
-
-        let! items = fetchRssFeed rssUrl
+        let! items = fetchRssFeed "https://roaldin.ch/feed.xml"
 
         let itemHtml =
             items
