@@ -4,10 +4,9 @@ open System.Text
 open System.Threading.Tasks
 open FSharp.Data
 
-let myFeed = "https://roaldin.ch/feed.xml"
 type Rss = XmlProvider<"https://roaldin.ch/feed.xml">
 
-let fetchRssFeed url =
+let fetchRssFeed (url: string) =
     async {
         let! rss = Rss.AsyncLoad(url)
         return rss.Entries |> Seq.map (fun item -> item.Title, item.Link)
@@ -15,7 +14,14 @@ let fetchRssFeed url =
 
 let handleRequest (context: HttpListenerContext) =
     async {
-        let! items = fetchRssFeed myFeed
+        let query = context.Request.Url.Query
+        let rssUrl = 
+            if query.StartsWith("?rss=") then
+                query.Substring(5)
+            else
+                "https://roaldin.ch/feed.xml"
+
+        let! items = fetchRssFeed rssUrl
 
         let itemHtml =
             items
