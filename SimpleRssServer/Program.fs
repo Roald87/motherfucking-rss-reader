@@ -11,10 +11,21 @@ let fetchRssFeed (url: string) =
         return rss.Entries |> Seq.map (fun item -> item.Title, item.Link)
     }
 
+let fetchAllRssFeeds (urls: string list) =
+    urls
+    |> List.map fetchRssFeed
+    |> Async.Parallel
+    |> Async.RunSynchronously
+    |> Seq.concat
+
 let handleRequest (context: HttpListenerContext) =
     async {
         let rssFeeds = getRssUrls context.Request.Url.Query
 
+        let items =
+            match rssFeeds with
+            | Some urls -> fetchAllRssFeeds urls
+            | None -> Seq.empty
 
         let itemHtml =
             items
