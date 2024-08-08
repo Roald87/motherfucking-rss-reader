@@ -8,3 +8,10 @@ repos:
     -   id: end-of-file-fixer
     -   id: check-yaml
     -   id: check-added-large-files
+-   repo: local
+    hooks:
+    -   id: fantomas
+        name: fantomas
+        entry: fantomas
+        language: system
+        files: \.(fs)$

@@ -77,4 +77,4 @@ let ``Test parseRss with roaldinch.xml`` () =
               + "..." } ]
 
     Assert.Equal(expected.Length, result.Length)
-    List.iter2 (fun (exp : Article) (act : Article) -> Assert.Equal<Article>(exp, act)) expected result
+    List.iter2 (fun (exp: Article) (act: Article) -> Assert.Equal<Article>(exp, act)) expected result
