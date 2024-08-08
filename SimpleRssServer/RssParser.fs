@@ -3,7 +3,10 @@ module SimpleRssServer.RssParser
 open System
 open System.Xml.Linq
 
-type Article = { PostDate: DateTime; Title: string }
+type Article =
+    { PostDate: DateTime
+      Title: string
+      Url: string }
 
 let parseRss (fileName: string) : Article list =
     let doc = XDocument.Load(fileName)
@@ -15,5 +18,9 @@ let parseRss (fileName: string) : Article list =
         let published = entry.Element(ns + "published").Value
         let postDate = DateTime.Parse(published)
         let title = entry.Element(ns + "title").Value
-        { PostDate = postDate; Title = title })
+        let link = entry.Element(ns + "link").Attribute(XName.Get("href")).Value
+
+        { PostDate = postDate
+          Title = title
+          Url = link })
     |> Seq.toList
