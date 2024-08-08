@@ -6,7 +6,8 @@ open System.Xml.Linq
 type Article =
     { PostDate: DateTime
       Title: string
-      Url: string }
+      Url: string
+      BaseUrl: string }
 
 let parseRss (fileName: string) : Article list =
     let doc = XDocument.Load(fileName)
@@ -20,7 +21,12 @@ let parseRss (fileName: string) : Article list =
         let title = entry.Element(ns + "title").Value
         let link = entry.Element(ns + "link").Attribute(XName.Get("href")).Value
 
+        let baseUrl =
+            let uri = Uri(link)
+            uri.Host
+
         { PostDate = postDate
           Title = title
-          Url = link })
+          Url = link
+          BaseUrl = baseUrl })
     |> Seq.toList
