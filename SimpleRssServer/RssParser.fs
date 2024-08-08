@@ -7,7 +7,16 @@ type Article =
     { PostDate: DateTime
       Title: string
       Url: string
-      BaseUrl: string }
+      BaseUrl: string
+      Text: string }
+
+let stripHtml (input: string) : string =
+    let regex = Text.RegularExpressions.Regex("<.*?>")
+    let noHtml = regex.Replace(input, "")
+    let removeMutliSpaces = Text.RegularExpressions.Regex("\s+")
+
+    noHtml.Replace("\n", " ").Replace("\r", "").Trim()
+    |> fun s -> removeMutliSpaces.Replace(s, " ")
 
 let parseRss (fileName: string) : Article list =
     let doc = XDocument.Load(fileName)
@@ -25,8 +34,17 @@ let parseRss (fileName: string) : Article list =
             let uri = Uri(link)
             uri.Host
 
+        let text =
+            let content = stripHtml (entry.Element(ns + "content").Value)
+
+            if content.Length > 256 then
+                content.Substring(0, 256) + "..."
+            else
+                content
+
         { PostDate = postDate
           Title = title
           Url = link
-          BaseUrl = baseUrl })
+          BaseUrl = baseUrl
+          Text = text })
     |> Seq.toList
