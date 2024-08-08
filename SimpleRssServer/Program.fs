@@ -1,6 +1,7 @@
 ﻿open System.Net
 open System.Text
 open FSharp.Data
+open SimpleRssServer.Request
 
 type Rss = XmlProvider<"https://roaldin.ch/feed.xml">
 
@@ -12,7 +13,8 @@ let fetchRssFeed (url: string) =
 
 let handleRequest (context: HttpListenerContext) =
     async {
-        let! items = fetchRssFeed "https://roaldin.ch/feed.xml"
+        let rssFeeds = getRssUrls context.Request.Url.Query
+
 
         let itemHtml =
             items
