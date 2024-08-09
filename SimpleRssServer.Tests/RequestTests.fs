@@ -20,3 +20,8 @@ let ``Test getRequestInfo with empty string`` () =
     let result = getRssUrls ""
 
     Assert.Equal(None, result)
+
+[<Fact>]
+let ``Test convertUrlToFilename`` () =
+    Assert.Equal("https_abc_com_test", convertUrlToFilename "https://abc.com/test")
+    Assert.Equal("https_abc_com_test_rss_blabla", convertUrlToFilename "https://abc.com/test?rss=blabla")
