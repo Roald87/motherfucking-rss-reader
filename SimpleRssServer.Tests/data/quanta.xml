@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/"
+  xmlns:media="http://search.yahoo.com/mrss/"
+  xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:atom="http://www.w3.org/2005/Atom"
+  xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+  xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Quanta Magazine</title>
+	<atom:link href="https://api.quantamagazine.org/feed/" rel="self" type="application/rss+xml"></atom:link>
+	<link>https://www.quantamagazine.org</link>
+	<description>Illuminating science</description>
+	<lastBuildDate>Thu, 08 Aug 2024 20:07:01 -0400</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=6.2</generator>
+	<item>
+		<title>Physicists Pinpoint the Quantum Origin of the Greenhouse Effect</title>
+		<link>https://www.quantamagazine.org/physicists-pinpoint-the-quantum-origin-of-the-greenhouse-effect-20240807/</link>
+		<comments>https://www.quantamagazine.org/physicists-pinpoint-the-quantum-origin-of-the-greenhouse-effect-20240807/?noamp=mobile#respond</comments>
+		<pubDate>Wed, 07 Aug 2024 14:25:32 +0000</pubDate>
+    <dc:creator><![CDATA[Joseph Howlett]]></dc:creator>
+				<category><![CDATA[Physics]]></category>
+
+		<guid isPermaLink="false">https://www.quantamagazine.org/?p=139592</guid>
+		<description><![CDATA[Carbon dioxide’s powerful heat-trapping effect has been traced to a quirk of its quantum structure. The finding may explain climate change better than any computer model.            <p>The post <a href="https://www.quantamagazine.org/physicists-pinpoint-the-quantum-origin-of-the-greenhouse-effect-20240807/" target="_blank">Physicists Pinpoint the Quantum Origin of the Greenhouse Effect</a> first appeared on <a href="https://api.quantamagazine.org" target="_blank">Quanta Magazine</a></p>]]></description>
+				<content:encoded><![CDATA[<p>In 1896, the Swedish physicist Svante Arrhenius realized that carbon dioxide (CO2) traps heat in Earth&rsquo;s atmosphere &mdash; the phenomenon now called the greenhouse effect. Since then, increasingly sophisticated modern climate models have verified Arrhenius&rsquo; central conclusion: that every time the CO2 concentration in the atmosphere doubles, Earth&rsquo;s temperature will rise between 2 and 5 degrees Celsius.</p>
+<p><a href="https://www.quantamagazine.org/physicists-pinpoint-the-quantum-origin-of-the-greenhouse-effect-20240807/" rel="nofollow">Source</a></p>]]></content:encoded>
+			<wfw:commentRss>https://www.quantamagazine.org/physicists-pinpoint-the-quantum-origin-of-the-greenhouse-effect-20240807/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+<media:content url="https://d2r55xnwy6nx47.cloudfront.net/uploads/2024/08/GreenhouseEffect-crKristinaArmitageMattTwombly-Default.webp" type="image/jpg"></media:content>
+	</item>
+		<item>
+		<title>Grad Students Find Inevitable Patterns in Big Sets of Numbers</title>
+		<link>https://www.quantamagazine.org/grad-students-find-inevitable-patterns-in-big-sets-of-numbers-20240805/</link>
+		<comments>https://www.quantamagazine.org/grad-students-find-inevitable-patterns-in-big-sets-of-numbers-20240805/?noamp=mobile#respond</comments>
+		<pubDate>Mon, 05 Aug 2024 14:27:52 +0000</pubDate>
+    <dc:creator><![CDATA[Leila Sloman]]></dc:creator>
+				<category><![CDATA[Mathematics]]></category>
+
+		<guid isPermaLink="false">https://www.quantamagazine.org/?p=139566</guid>
+		<description><![CDATA[A new proof marks the first progress in decades on a problem about how order emerges from disorder.            <p>The post <a href="https://www.quantamagazine.org/grad-students-find-inevitable-patterns-in-big-sets-of-numbers-20240805/" target="_blank">Grad Students Find Inevitable Patterns in Big Sets of Numbers</a> first appeared on <a href="https://api.quantamagazine.org" target="_blank">Quanta Magazine</a></p>]]></description>
+				<content:encoded><![CDATA[<p>In late 2017, Ashwin Sah and Mehtaab Sawhney met as undergraduates at the Massachusetts Institute of Technology. Since then, the pair have written a mind-boggling 57 math proofs together, many of them profound advances in various fields. In February, Sah and Sawhney announced yet another joint accomplishment. With James Leng, a graduate student at the University of California, Los Angeles...</p>
+<p><a href="https://www.quantamagazine.org/grad-students-find-inevitable-patterns-in-big-sets-of-numbers-20240805/" rel="nofollow">Source</a></p>]]></content:encoded>
+			<wfw:commentRss>https://www.quantamagazine.org/grad-students-find-inevitable-patterns-in-big-sets-of-numbers-20240805/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+<media:content url="https://d2r55xnwy6nx47.cloudfront.net/uploads/2024/08/SzemerediTheorem-crNicoRoper-Default.webp" type="image/jpg"></media:content>
+	</item>
+		<item>
+		<title>What Is Analog Computing?</title>
+		<link>https://www.quantamagazine.org/what-is-analog-computing-20240802/</link>
+		<comments>https://www.quantamagazine.org/what-is-analog-computing-20240802/?noamp=mobile#respond</comments>
+		<pubDate>Fri, 02 Aug 2024 14:53:14 +0000</pubDate>
+    <dc:creator><![CDATA[Max G. Levy and Michael Moyer]]></dc:creator>
+				<category><![CDATA[Computer Science]]></category>
+
+		<guid isPermaLink="false">https://www.quantamagazine.org/?p=139518</guid>
+		<description><![CDATA[You don’t need 0s and 1s to perform computations, and in some cases it’s better to avoid them.            <p>The post <a href="https://www.quantamagazine.org/what-is-analog-computing-20240802/" target="_blank">What Is Analog Computing?</a> first appeared on <a href="https://api.quantamagazine.org" target="_blank">Quanta Magazine</a></p>]]></description>
+				<content:encoded><![CDATA[<p>Computing today is almost entirely digital. The vast informational catacombs of the internet, the algorithms that power AI, the screen you&rsquo;re reading this on &mdash; all are powered by electronic circuits manipulating binary digits &mdash; 0 and 1, off and on. We live, it has been said, in the digital age. But it&rsquo;s not obvious why a system that operates using discrete chunks of information would be good at...</p>
+<p><a href="https://www.quantamagazine.org/what-is-analog-computing-20240802/" rel="nofollow">Source</a></p>]]></content:encoded>
+			<wfw:commentRss>https://www.quantamagazine.org/what-is-analog-computing-20240802/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+<media:content url="https://d2r55xnwy6nx47.cloudfront.net/uploads/2024/08/AnalogComputersExplainer-crDamienBoureille-Default.webp" type="image/jpg"></media:content>
+	</item>
+		<item>
+		<title>What Happens in a Mind That Can’t ‘See’ Mental Images</title>
+		<link>https://www.quantamagazine.org/what-happens-in-a-mind-that-cant-see-mental-images-20240801/</link>
+		<comments>https://www.quantamagazine.org/what-happens-in-a-mind-that-cant-see-mental-images-20240801/?noamp=mobile#respond</comments>
+		<pubDate>Thu, 01 Aug 2024 14:30:51 +0000</pubDate>
+    <dc:creator><![CDATA[Yasemin Saplakoglu]]></dc:creator>
+				<category><![CDATA[Biology]]></category>
+
+		<guid isPermaLink="false">https://www.quantamagazine.org/?p=139440</guid>
+		<description><![CDATA[Neuroscience research into people with aphantasia, who don’t experience mental imagery, is revealing how imagination works and demonstrating the sweeping variety in our subjective experiences.            <p>The post <a href="https://www.quantamagazine.org/what-happens-in-a-mind-that-cant-see-mental-images-20240801/" target="_blank">What Happens in a Mind That Can’t ‘See’ Mental Images</a> first appeared on <a href="https://api.quantamagazine.org" target="_blank">Quanta Magazine</a></p>]]></description>
+				<content:encoded><![CDATA[<p>Two years ago, Sarah Shomstein realized she didn&rsquo;t have a mind&rsquo;s eye. The vision scientist was sitting in a seminar room, listening to a scientific talk, when the presenter asked the audience to imagine an apple. Shomstein closed her eyes and did so. Then, the presenter asked the crowd to open their eyes and rate how vividly they saw the apple in their mind. Saw the apple? Shomstein was confused.</p>
+<p><a href="https://www.quantamagazine.org/what-happens-in-a-mind-that-cant-see-mental-images-20240801/" rel="nofollow">Source</a></p>]]></content:encoded>
+			<wfw:commentRss>https://www.quantamagazine.org/what-happens-in-a-mind-that-cant-see-mental-images-20240801/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+<media:content url="https://d2r55xnwy6nx47.cloudfront.net/uploads/2024/07/AphantasiaExplainer-crKristinaArmitage-Default.webp" type="image/jpg"></media:content>
+	</item>
+		<item>
+		<title>How Does Math Keep Secrets?</title>
+		<link>https://www.quantamagazine.org/how-does-math-keep-secrets-20240801/</link>
+		<comments>https://www.quantamagazine.org/how-does-math-keep-secrets-20240801/?noamp=mobile#respond</comments>
+		<pubDate>Thu, 01 Aug 2024 13:30:04 +0000</pubDate>
+    <dc:creator><![CDATA[Janna Levin]]></dc:creator>
+				<category><![CDATA[Computer Science]]></category>
+		<category><![CDATA[Mathematics]]></category>
+
+		<guid isPermaLink="false">https://www.quantamagazine.org/?p=139467</guid>
+		<description><![CDATA[Cryptography is the thread that connects Julius Caesar, World War II and quantum computing, and it now lies under nearly every part of modern life. In this week’s episode, computer scientist Boaz Barak and co-host Janna Levin discuss the past and future of secrecy.            <p>The post <a href="https://www.quantamagazine.org/how-does-math-keep-secrets-20240801/" target="_blank">How Does Math Keep Secrets?</a> first appeared on <a href="https://api.quantamagazine.org" target="_blank">Quanta Magazine</a></p>]]></description>
+				<content:encoded><![CDATA[<p>Can you keep a secret? Modern techniques for maintaining the confidentiality of information are based on mathematical problems that are inherently too difficult for anyone to solve without the right hints. Yet what does that mean when quantum computers capable of solving many problems astronomically faster are on the horizon? In this episode, host Janna Levin talks with computer scientist Boaz...</p>
+<p><a href="https://www.quantamagazine.org/how-does-math-keep-secrets-20240801/" rel="nofollow">Source</a></p>]]></content:encoded>
+			<wfw:commentRss>https://www.quantamagazine.org/how-does-math-keep-secrets-20240801/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+<media:content url="https://d2r55xnwy6nx47.cloudfront.net/uploads/2024/08/0801_JOW-E14-Cryptography-crPeterGreenwood-Default.webp" type="image/jpg"></media:content>
+	</item>
+	</channel>
+</rss>

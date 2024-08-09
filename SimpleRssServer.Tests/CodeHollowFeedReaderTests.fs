@@ -32,3 +32,19 @@ let ``test CodeHollow.FeedReader with zoesklot`` () =
             .Substring(0, 255),
         feed.Items[0].Description.Substring(0, 255)
     )
+
+[<Fact>]
+let ``test CodeHollow.FeedReader with spectrum`` () =
+    // https://spectrum.ieee.org/feeds/feed.rss
+    let feed = FeedReader.ReadFromFile("data/spectrum.rss")
+
+    Assert.Equal(30, feed.Items.Count)
+    Assert.Equal("Quantum Cryptography Has Everyone Scrambling", feed.Items[0].Title)
+
+[<Fact>]
+let ``test CodeHollow.FeedReader with quanta`` () =
+    // https://www.quantamagazine.org/feed/
+    let feed = FeedReader.ReadFromFile("data/quanta.xml")
+
+    Assert.Equal(5, feed.Items.Count)
+    Assert.Equal("Physicists Pinpoint the Quantum Origin of the Greenhouse Effect", feed.Items[0].Title)
