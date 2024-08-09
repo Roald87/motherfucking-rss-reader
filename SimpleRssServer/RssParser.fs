@@ -1,6 +1,7 @@
 module SimpleRssServer.RssParser
 
 open System
+open System.IO
 
 open CodeHollow.FeedReader
 
@@ -21,8 +22,8 @@ let stripHtml (input: string) : string =
 
 let ARTICLE_DESCRIPTION_LENGTH = 255
 
-let parseRss (fileName: string) : Article list =
-    let feed = FeedReader.ReadFromFile(fileName)
+let parseRss (feedContent: string) : Article list =
+    let feed = FeedReader.ReadFromString(feedContent)
 
     feed.Items
     |> Seq.map (fun entry ->
@@ -53,3 +54,6 @@ let parseRss (fileName: string) : Article list =
           BaseUrl = baseUrl
           Text = text })
     |> Seq.toList
+
+
+let parseRssFromFile (fileName) = parseRss (File.ReadAllText fileName)

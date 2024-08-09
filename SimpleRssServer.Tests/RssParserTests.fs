@@ -6,7 +6,7 @@ open System
 
 [<Fact>]
 let ``Test parseRss with roaldinch.xml`` () =
-    let result = parseRss "data/roaldinch.xml"
+    let result = parseRssFromFile "data/roaldinch.xml"
 
     let expected =
         [ { PostDate = Some(DateTime(2024, 8, 6, 0, 0, 0))
@@ -81,7 +81,7 @@ let ``Test parseRss with roaldinch.xml`` () =
 
 [<Fact>]
 let ``Test parseRss with zoesklot.xml`` () =
-    let result = parseRss "data/zoesklot.xml"
+    let result = parseRssFromFile "data/zoesklot.xml"
 
     let expectedFirst =
         { PostDate = Some(DateTime(2024, 8, 6, 13, 26, 32))
