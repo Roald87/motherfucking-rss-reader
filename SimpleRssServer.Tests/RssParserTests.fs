@@ -78,3 +78,26 @@ let ``Test parseRss with roaldinch.xml`` () =
 
     Assert.Equal(expected.Length, result.Length)
     List.iter2 (fun (exp: Article) (act: Article) -> Assert.Equal<Article>(exp, act)) expected result
+[<Fact>]
+let ``Test parseRss with zoesklot.xml`` () =
+    let result = parseRss "data/zoesklot.xml"
+
+    let expectedFirst =
+        { PostDate = DateTime(2024, 8, 6, 13, 26, 32)
+          Title = "Duitse shag"
+          Url = "https://www.zoesklot.nl/duitse-shag/"
+          BaseUrl = "www.zoesklot.nl"
+          Text =
+            "Bij de kassa van de Jumbo ziet M. mij en ik kan niet meer vluchten naar een andere kassa. M., een magere vijftiger met donker achterovergekamd golvend haar; enkele tattoos, oorbel en kunstgebitje ken ik van de volkstuin. Als we oogcontact hebben dan word ik meegezogen in zijn persoonlijke wereld. “Het was zo druk man, ..." }
+
+    let expectedLast =
+        { PostDate = DateTime(2024, 7, 24, 21, 8, 2)
+          Title = "Wolf"
+          Url = "https://www.zoesklot.nl/wolf/"
+          BaseUrl = "www.zoesklot.nl"
+          Text =
+            "Het was even groot nieuws in Nederland. Een wolf heeft een meisje gebeten. “De wolf beet haar zeer kort in de zij, maar beet niet door”, volgens de ouders. Het Landgoed Den Treek werd daarop deels afgesloten voor publiek. Om dit bericht in perspectief te plaatsen ging ik op zoek naar bijtincidenten van onze geliefde ..." }
+
+    Assert.Equal(5, result.Length)
+    Assert.Equal<Article>(expectedFirst, List.head result)
+    Assert.Equal<Article>(expectedLast, List.last result)
