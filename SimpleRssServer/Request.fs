@@ -38,10 +38,12 @@ let fetchWithCache client (cacheLocation: string) (url: string) =
         let cachePath = Path.Combine(cacheLocation, cacheFilename)
 
         if not <| File.Exists(cachePath) then
+            printfn $"Did not find cached file %s{cachePath}. Fetching %s{url}"
             let! page = getAsync client url
             File.WriteAllText(cachePath, page)
             return page
         else
+            printfn $"Found cached file %s{cachePath}"
             return File.ReadAllText(cachePath)
     }
 
@@ -54,6 +56,7 @@ let fetchAllRssFeeds client (cacheLocation: string) (urls: string list) =
 
 let handleRequest client (cacheLocation: string) (context: HttpListenerContext) =
     async {
+        printfn $"Received request %A{context.Request.Url.Query}"
         let rssFeeds = getRssUrls context.Request.Url.Query
 
         let items =
