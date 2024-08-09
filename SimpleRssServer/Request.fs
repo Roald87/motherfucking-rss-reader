@@ -6,6 +6,7 @@ open System
 open System.Web
 open System.Net.Http
 open RssParser
+open System.IO
 
 let convertUrlToFilename (url: string) : string =
     let replaceInvalidFilenameChars = Text.RegularExpressions.Regex("[.?=:/]+")
@@ -31,17 +32,33 @@ let getAsync (client: HttpClient) (url: string) =
         return content
     }
 
-let fetchAllRssFeeds client (urls: string list) =
-    urls |> List.map (getAsync client) |> Async.Parallel |> Async.RunSynchronously
+let fetchWithCache client (cacheLocation: string) (url: string) =
+    async {
+        let cacheFilename = convertUrlToFilename url
+        let cachePath = Path.Combine(cacheLocation, cacheFilename)
+
+        if not <| File.Exists(cachePath) then
+            let! page = getAsync client url
+            File.WriteAllText(cachePath, page)
+            return page
+        else
+            return File.ReadAllText(cachePath)
+    }
+
+let fetchAllRssFeeds client (cacheLocation: string) (urls: string list) =
+    urls
+    |> List.map (fetchWithCache client cacheLocation)
+    |> Async.Parallel
+    |> Async.RunSynchronously
 
 
-let handleRequest client (context: HttpListenerContext) =
+let handleRequest client (cacheLocation: string) (context: HttpListenerContext) =
     async {
         let rssFeeds = getRssUrls context.Request.Url.Query
 
         let items =
             match rssFeeds with
-            | Some urls -> fetchAllRssFeeds client urls
+            | Some urls -> fetchAllRssFeeds client cacheLocation urls
             | None -> [||]
 
         let itemHtml =

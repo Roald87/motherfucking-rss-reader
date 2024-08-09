@@ -3,7 +3,7 @@ open System.IO
 
 open SimpleRssServer.Request
 
-let startServer (prefixes: string list) =
+let startServer cacheDir (prefixes: string list) =
     let listener = new HttpListener()
     prefixes |> List.iter listener.Prefixes.Add
     listener.Start()
@@ -14,7 +14,7 @@ let startServer (prefixes: string list) =
     let rec loop () =
         async {
             let! context = listener.GetContextAsync() |> Async.AwaitTask
-            do! handleRequest httpClient context
+            do! handleRequest httpClient cacheDir context
             return! loop ()
         }
 
@@ -27,5 +27,5 @@ let main argv =
     if not (Directory.Exists(cacheDir)) then
         Directory.CreateDirectory(cacheDir) |> ignore
 
-    startServer [ "http://localhost:5000/" ] |> Async.RunSynchronously
+    startServer cacheDir [ "http://localhost:5000/" ] |> Async.RunSynchronously
     0

@@ -44,3 +44,4 @@ msbuild.wrn
 
 .fake
 .aider*
+rss-cache/
