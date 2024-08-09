@@ -21,7 +21,12 @@ let stripHtml (input: string) : string =
 let parseRss (fileName: string) : Article list =
     let doc = XDocument.Load(fileName)
     let ns = XNamespace.Get("http://www.w3.org/2005/Atom")
-    let entries = doc.Descendants(ns + "entry")
+    let entries = 
+        let atomEntries = doc.Descendants(ns + "entry")
+        if Seq.isEmpty(atomEntries) then
+            doc.Descendants(XName.Get("item"))
+        else
+            atomEntries
 
     entries
     |> Seq.map (fun entry ->
