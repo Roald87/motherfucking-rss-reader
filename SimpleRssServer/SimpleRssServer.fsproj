@@ -9,6 +9,7 @@
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="CodeHollow.FeedReader" Version="1.2.6" />
     <PackageReference Include="FSharp.Data" Version="6.4.0" />
   </ItemGroup>
 </Project>

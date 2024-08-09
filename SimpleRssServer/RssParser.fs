@@ -1,10 +1,11 @@
 module SimpleRssServer.RssParser
 
 open System
-open System.Xml.Linq
+
+open CodeHollow.FeedReader
 
 type Article =
-    { PostDate: DateTime
+    { PostDate: DateTime option
       Title: string
       Url: string
       BaseUrl: string
@@ -18,32 +19,31 @@ let stripHtml (input: string) : string =
     noHtml.Replace("\n", " ").Replace("\r", "").Trim()
     |> fun s -> removeMutliSpaces.Replace(s, " ")
 
-let parseRss (fileName: string) : Article list =
-    let doc = XDocument.Load(fileName)
-    let ns = XNamespace.Get("http://www.w3.org/2005/Atom")
-    let entries = 
-        let atomEntries = doc.Descendants(ns + "entry")
-        if Seq.isEmpty(atomEntries) then
-            doc.Descendants(XName.Get("item"))
-        else
-            atomEntries
+let ARTICLE_DESCRIPTION_LENGTH = 255
 
-    entries
+let parseRss (fileName: string) : Article list =
+    let feed = FeedReader.ReadFromFile(fileName)
+
+    feed.Items
     |> Seq.map (fun entry ->
-        let published = entry.Element(ns + "published").Value
-        let postDate = DateTime.Parse(published)
-        let title = entry.Element(ns + "title").Value
-        let link = entry.Element(ns + "link").Attribute(XName.Get("href")).Value
+        let postDate =
+            if entry.PublishingDate.HasValue then
+                Some(entry.PublishingDate.Value)
+            else
+                None
+
+        let title = entry.Title
+        let link = entry.Link
 
         let baseUrl =
             let uri = Uri(link)
             uri.Host
 
         let text =
-            let content = stripHtml (entry.Element(ns + "content").Value)
+            let content = stripHtml entry.Description
 
-            if content.Length > 256 then
-                content.Substring(0, 256) + "..."
+            if content.Length > ARTICLE_DESCRIPTION_LENGTH then
+                content.Substring(0, ARTICLE_DESCRIPTION_LENGTH) + "..."
             else
                 content
 
