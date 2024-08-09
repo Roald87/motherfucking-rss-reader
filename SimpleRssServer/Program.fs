@@ -9,10 +9,12 @@ let startServer (prefixes: string list) =
     listener.Start()
     printfn "Listening..."
 
+    let httpClient = new Http.HttpClient()
+
     let rec loop () =
         async {
             let! context = listener.GetContextAsync() |> Async.AwaitTask
-            do! handleRequest context
+            do! handleRequest httpClient context
             return! loop ()
         }
 

@@ -2,9 +2,10 @@ module SimpleRssServer.Request
 
 open System.Net
 open System.Text
-open FSharp.Data
 open System
 open System.Web
+open System.Net.Http
+open RssParser
 
 let convertUrlToFilename (url: string) : string =
     let replaceInvalidFilenameChars = Text.RegularExpressions.Regex("[.?=:/]+")
@@ -21,33 +22,33 @@ let getRssUrls (context: string) : string list option =
         else
             None
 
-type Rss = XmlProvider<"https://roaldin.ch/feed.xml">
-
-let fetchRssFeed (url: string) =
+// Fetch the contents of a web page
+let getAsync (client: HttpClient) (url: string) =
     async {
-        let! rss = Rss.AsyncLoad(url)
-        return rss.Entries |> Seq.map (fun item -> item.Title, item.Link)
+        let! response = client.GetAsync(url) |> Async.AwaitTask
+        response.EnsureSuccessStatusCode() |> ignore
+        let! content = response.Content.ReadAsStringAsync() |> Async.AwaitTask
+        return content
     }
 
-let fetchAllRssFeeds (urls: string list) =
-    urls
-    |> List.map fetchRssFeed
-    |> Async.Parallel
-    |> Async.RunSynchronously
-    |> Seq.concat
+let fetchAllRssFeeds client (urls: string list) =
+    urls |> List.map (getAsync client) |> Async.Parallel |> Async.RunSynchronously
 
-let handleRequest (context: HttpListenerContext) =
+
+let handleRequest client (context: HttpListenerContext) =
     async {
         let rssFeeds = getRssUrls context.Request.Url.Query
 
         let items =
             match rssFeeds with
-            | Some urls -> fetchAllRssFeeds urls
-            | None -> Seq.empty
+            | Some urls -> fetchAllRssFeeds client urls
+            | None -> [||]
 
         let itemHtml =
             items
-            |> Seq.map (fun (title, link) -> sprintf "<li><a href='%s'>%s</a></li>" link.Href title.Value)
+            |> Seq.collect parseRss
+            |> Seq.sortBy (fun a -> a.PostDate)
+            |> Seq.map (fun article -> $"<li><a href='%s{article.PostDate.ToString()}'>%s{article.Title}</a></li>")
             |> String.concat ""
 
         let responseString = sprintf "<h1>RSS Feed</h1><ul>%s</ul>" itemHtml
