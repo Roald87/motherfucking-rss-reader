@@ -1,4 +1,5 @@
 ﻿open System.Net
+open System.IO
 open System.Text
 open FSharp.Data
 open SimpleRssServer.Request
@@ -63,8 +64,9 @@ let startServer (prefixes: string list) =
 [<EntryPoint>]
 let main argv =
     let cacheDir = "rss-cache"
+
     if not (Directory.Exists(cacheDir)) then
         Directory.CreateDirectory(cacheDir) |> ignore
 
-    startServer ["http://localhost:5000/"] |> Async.RunSynchronously
+    startServer [ "http://localhost:5000/" ] |> Async.RunSynchronously
     0
