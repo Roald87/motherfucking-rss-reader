@@ -139,16 +139,20 @@ let handleRequest client (cacheLocation: string) (context: HttpListenerContext) 
     async {
         printfn $"Received request %A{context.Request.Url}"
 
+        context.Response.ContentType <- "text/html"
+
         let responseString =
             match context.Request.RawUrl with
-            | "/styles.css" as x -> File.ReadAllText("./" + x.Substring(1, x.Length - 1))
+            | "/styles.css" as x ->
+                context.Response.ContentType <- "text/css"
+                File.ReadAllText("./" + x.Substring(1, x.Length - 1))
             | "/config.html" as x -> File.ReadAllText(x.Substring(1, x.Length - 1))
             | Prefix "/?rss=" _ -> assembleRssFeeds client cacheLocation context.Request.Url.Query
             | _ -> landingPage
 
         let buffer = Encoding.UTF8.GetBytes(responseString)
         context.Response.ContentLength64 <- int64 buffer.Length
-        context.Response.ContentType <- "text/html"
+
 
         do!
             context.Response.OutputStream.WriteAsync(buffer, 0, buffer.Length)
