@@ -69,29 +69,10 @@ let rssHtmlItem article =
         </div>
     """
 
-let header =
-    """
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8", name="viewport" content="width=device-width, initial-scale=1">
-        <title>Motherfucking RSS Reader</title>
-        <link rel="stylesheet" type="text/css" href="/styles.css">
-    </head>
-    """
+let header = File.ReadAllText(Path.Combine("site", "header.html"))
 
 let landingPage =
-    header
-    + """
-    <body>
-        <div class="header">
-            <h1>Motherfucking RSS Reader</h1>
-            <a id="config-link" href="config.html">Configure</a>
-        </div>
-        <p><Please provide one or more RSS feed URLs as query parameters, e.g., ?rss=https://example.com/rss&rss=https://another.com/rss/</p>
-    </body>
-    </hmtl>
-    """
+    header + File.ReadAllText(Path.Combine("site", "landing-page.html"))
 
 let homepage rssItems =
     let body =
@@ -145,14 +126,13 @@ let handleRequest client (cacheLocation: string) (context: HttpListenerContext) 
             match context.Request.RawUrl with
             | "/styles.css" as x ->
                 context.Response.ContentType <- "text/css"
-                File.ReadAllText("./" + x.Substring(1, x.Length - 1))
-            | "/config.html" as x -> File.ReadAllText(x.Substring(1, x.Length - 1))
+                File.ReadAllText(Path.Combine("site", x.Substring(1, x.Length - 1)))
+            | "/config.html" as x -> File.ReadAllText(Path.Combine("site", x.Substring(1, x.Length - 1)))
             | Prefix "/?rss=" _ -> assembleRssFeeds client cacheLocation context.Request.Url.Query
             | _ -> landingPage
 
         let buffer = Encoding.UTF8.GetBytes(responseString)
         context.Response.ContentLength64 <- int64 buffer.Length
-
 
         do!
             context.Response.OutputStream.WriteAsync(buffer, 0, buffer.Length)

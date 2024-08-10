@@ -11,10 +11,7 @@
   <ItemGroup>
     <PackageReference Include="CodeHollow.FeedReader" Version="1.2.6" />
     <PackageReference Include="FSharp.Data" Version="6.4.0" />
-      <Content Include="config.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="styles.css">
+      <Content Include="site/*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
