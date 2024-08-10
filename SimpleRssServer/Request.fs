@@ -54,24 +54,97 @@ let fetchAllRssFeeds client (cacheLocation: string) (urls: string list) =
     |> Async.RunSynchronously
 
 
+let rssHtmlItem article =
+    let date =
+        if article.PostDate.IsSome then
+            $"@ %s{article.PostDate.Value.ToLongDateString()}"
+        else
+            ""
+
+    $"""
+    <div class="feed-item">
+        <h2><a href="%s{article.Url}" target="_blank">%s{article.Title}</a></h2>
+            <div class="source-date">%s{article.BaseUrl} %s{date}</div>
+            <p>%s{article.Text}</p>
+        </div>
+    """
+
+let header =
+    """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8", name="viewport" content="width=device-width, initial-scale=1">
+        <title>Motherfucking RSS Reader</title>
+        <link rel="stylesheet" type="text/css" href="/styles.css">
+    </head>
+    """
+
+let landingPage =
+    header
+    + """
+    <body>
+        <div class="header">
+            <h1>Motherfucking RSS Reader</h1>
+            <a id="config-link" href="config.html">Configure</a>
+        </div>
+        <p><Please provide one or more RSS feed URLs as query parameters, e.g., ?rss=https://example.com/rss&rss=https://another.com/rss/</p>
+    </body>
+    </hmtl>
+    """
+
+let homepage rssItems =
+    let body =
+        """
+    <body>
+        <div class="header">
+            <h1>Motherfucking RSS Reader</h1>
+            <a id="config-link" href="config.html">Configure</a>
+        </div>
+    """
+
+    let rssFeeds =
+        rssItems
+        |> Seq.collect parseRss
+        |> Seq.sortByDescending (fun a -> a.PostDate)
+        |> Seq.map rssHtmlItem
+        |> String.concat ""
+
+    let footer =
+        """
+    </body>
+    </html>
+    """
+
+    header + body + rssFeeds + footer
+
+// https://stackoverflow.com/a/3722671/6329629
+let (|Prefix|_|) (p: string) (s: string) =
+    if s.StartsWith(p) then
+        Some(s.Substring(p.Length))
+    else
+        None
+
+let assembleRssFeeds client cacheLocation query =
+    let rssFeeds = getRssUrls query
+
+    let items =
+        match rssFeeds with
+        | Some urls -> fetchAllRssFeeds client cacheLocation urls
+        | None -> [||]
+
+    homepage items
+
 let handleRequest client (cacheLocation: string) (context: HttpListenerContext) =
     async {
-        printfn $"Received request %A{context.Request.Url.Query}"
-        let rssFeeds = getRssUrls context.Request.Url.Query
+        printfn $"Received request %A{context.Request.Url}"
 
-        let items =
-            match rssFeeds with
-            | Some urls -> fetchAllRssFeeds client cacheLocation urls
-            | None -> [||]
-
-        let itemHtml =
-            items
-            |> Seq.collect parseRss
-            |> Seq.sortBy (fun a -> a.PostDate)
-            |> Seq.map (fun article -> $"<li><a href='%s{article.PostDate.ToString()}'>%s{article.Title}</a></li>")
-            |> String.concat ""
-
-        let responseString = sprintf "<h1>RSS Feed</h1><ul>%s</ul>" itemHtml
+        let responseString =
+            match context.Request.RawUrl with
+            | "/styles.css" as x -> File.ReadAllText("./" + x.Substring(1, x.Length - 1))
+            | "/config.html" as x -> File.ReadAllText(x.Substring(1, x.Length - 1))
+            | Prefix "/?rss=" _ -> assembleRssFeeds client cacheLocation context.Request.Url.Query
+            | _ -> landingPage
 
         let buffer = Encoding.UTF8.GetBytes(responseString)
         context.Response.ContentLength64 <- int64 buffer.Length

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8", name="viewport" content="width=device-width, initial-scale=1">
+    <title>Configure RSS Feeds</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Configure RSS Feeds</h1>
+    <form id="rss-config-form">
+        <!-- RSS feed input fields will be added here by JavaScript -->
+        <input type="submit" value="Save">
+    </form>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const rssUrls = urlParams.getAll('rss').map(url => decodeURIComponent(url));
+            const form = document.getElementById('rss-config-form');
+
+            rssUrls.forEach(url => {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.name = 'rss';
+                input.value = decodeURIComponent(url);
+                form.insertBefore(input, form.lastElementChild);
+            });
+
+            // Add an extra empty input field
+            const extraInput = document.createElement('input');
+            extraInput.type = 'text';
+            extraInput.name = 'rss';
+            form.insertBefore(extraInput, form.lastElementChild);
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(form);
+                const newRssUrls = formData.getAll('rss').filter(url => url.trim() !== '');
+                const newUrlParams = new URLSearchParams();
+                newRssUrls.forEach(url => newUrlParams.append('rss', encodeURIComponent(url)));
+                window.location.href = `index.html?${newUrlParams.toString()}`;
+            });
+        });
+    </script>
+</body>
+</html>

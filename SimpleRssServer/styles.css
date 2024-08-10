@@ -1,0 +1,31 @@
+body {
+    margin: 40px auto;
+    max-width: 650px;
+    line-height: 1.6;
+    font-size: 18px;
+    color: #444;
+    padding: 0 10px;
+}
+
+.source-date {
+    font-style: italic;
+}
+
+a:visited {
+    color: darkgray;
+}
+
+a {
+    color: #444;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+input {
+    margin-bottom: 10px;
+    padding: 8px;
+    font-size: 14px;
+}
