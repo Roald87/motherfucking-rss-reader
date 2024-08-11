@@ -37,13 +37,25 @@ let fetchWithCache client (cacheLocation: string) (url: string) =
         let cacheFilename = convertUrlToFilename url
         let cachePath = Path.Combine(cacheLocation, cacheFilename)
 
-        if not <| File.Exists(cachePath) then
-            printfn $"Did not find cached file %s{cachePath}. Fetching %s{url}"
+        let fileExists = File.Exists(cachePath)
+        let fileIsOld = 
+            if fileExists then
+                let lastWriteTime = File.GetLastWriteTime(cachePath)
+                (DateTime.Now - lastWriteTime).TotalHours > 1.0
+            else
+                false
+
+        if not fileExists || fileIsOld then
+            if fileIsOld then
+                printfn $"Cached file %s{cachePath} is older than 1 hour. Fetching %s{url}"
+            else
+                printfn $"Did not find cached file %s{cachePath}. Fetching %s{url}"
+
             let! page = getAsync client url
             File.WriteAllText(cachePath, page)
             return page
         else
-            printfn $"Found cached file %s{cachePath}"
+            printfn $"Found cached file %s{cachePath} and it is up to date"
             return File.ReadAllText(cachePath)
     }
 
