@@ -3,20 +3,22 @@ body {
     max-width: 650px;
     line-height: 1.6;
     font-size: 18px;
-    color: #444;
+    color: #333;
     padding: 0 10px;
 }
 
 .source-date {
-    font-style: italic;
+    font-size: 16px;
+    color: #888;
+    line-height: 0.5;
 }
 
 a:visited {
-    color: darkgray;
+    color: #888;
 }
 
 a {
-    color: #444;
+    color: #333;
 }
 
 form {
