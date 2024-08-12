@@ -1,6 +1,6 @@
 # Motherfucking RSS feed reader
 
-A very simple RSS feed reader, in the spirit of the motherfucking websites.
+A basic RSS feed reader, in the spirit of the motherfucking websites.
 
 ## Developers
 
