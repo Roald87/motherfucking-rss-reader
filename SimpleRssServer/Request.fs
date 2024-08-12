@@ -126,6 +126,13 @@ let configPage query =
 
     let urlFields =
         match rssFeeds with
+        | Some urls when query.Contains("addField=true") ->
+            let newField = "<input type='text' name='rss'><br>"
+
+            (urls
+             |> List.map (fun url -> $"<input type='text' name='rss' value='%s{url}'><br>")
+             |> String.concat "\n")
+            + newField
         | Some urls ->
             urls
             |> List.map (fun url -> $"<input type='text' name='rss' value='%s{url}'><br>")
@@ -133,7 +140,8 @@ let configPage query =
         | None -> ""
 
     let emptyField =
-        $"<input type='text' name='rss'><br><input type='submit' value='Submit'></form>"
+        $"<input type='text' name='rss'><br><input type='submit' value='Submit'>
+        <button type='submit' formaction='/config.html' name=''>Add another field</button></form>"
 
     header + body + urlFields + emptyField + footer
 
@@ -149,7 +157,11 @@ let assembleRssFeeds client cacheLocation query =
 
     let items =
         match rssFeeds with
-        | Some urls -> fetchAllRssFeeds client cacheLocation urls
+        | Some urls ->
+            let filteredUrls =
+                urls |> List.filter (fun url -> not (String.IsNullOrWhiteSpace(url)))
+
+            fetchAllRssFeeds client cacheLocation filteredUrls
         | None -> [||]
 
     homepage query items
