@@ -38,7 +38,8 @@ let fetchWithCache client (cacheLocation: string) (url: string) =
         let cachePath = Path.Combine(cacheLocation, cacheFilename)
 
         let fileExists = File.Exists(cachePath)
-        let fileIsOld = 
+
+        let fileIsOld =
             if fileExists then
                 let lastWriteTime = File.GetLastWriteTime(cachePath)
                 (DateTime.Now - lastWriteTime).TotalHours > 1.0
@@ -86,13 +87,19 @@ let header = File.ReadAllText(Path.Combine("site", "header.html"))
 let landingPage =
     header + File.ReadAllText(Path.Combine("site", "landing-page.html"))
 
-let homepage rssItems =
+let footer =
+    """
+    </body>
+    </html>
+    """
+
+let homepage query rssItems =
     let body =
-        """
+        $"""
     <body>
         <div class="header">
             <h1>Motherfucking RSS Reader</h1>
-            <a id="config-link" href="config.html">Configure</a>
+            <a id="config-link" href="config.html/%s{query}">Configure</a>
         </div>
     """
 
@@ -103,13 +110,32 @@ let homepage rssItems =
         |> Seq.map rssHtmlItem
         |> String.concat ""
 
-    let footer =
+    header + body + rssFeeds + footer
+
+let configPage query =
+    let body =
         """
-    </body>
-    </html>
+    <body>
+        <div class="header">
+            <h1>Configure RSS Reader</h1>
+        </div>
+        <form id="rss-config-form" method="GET" action="/">
     """
 
-    header + body + rssFeeds + footer
+    let rssFeeds = getRssUrls query
+
+    let urlFields =
+        match rssFeeds with
+        | Some urls ->
+            urls
+            |> List.map (fun url -> $"<input type='text' name='rss' value='%s{url}'><br>")
+            |> String.concat "\n"
+        | None -> ""
+
+    let emptyField =
+        $"<input type='text' name='rss'><br><input type='submit' value='Submit'></form>"
+
+    header + body + urlFields + emptyField + footer
 
 // https://stackoverflow.com/a/3722671/6329629
 let (|Prefix|_|) (p: string) (s: string) =
@@ -126,7 +152,7 @@ let assembleRssFeeds client cacheLocation query =
         | Some urls -> fetchAllRssFeeds client cacheLocation urls
         | None -> [||]
 
-    homepage items
+    homepage query items
 
 let handleRequest client (cacheLocation: string) (context: HttpListenerContext) =
     async {
@@ -139,7 +165,8 @@ let handleRequest client (cacheLocation: string) (context: HttpListenerContext) 
             | "/styles.css" as x ->
                 context.Response.ContentType <- "text/css"
                 File.ReadAllText(Path.Combine("site", x.Substring(1, x.Length - 1)))
-            | "/config.html" as x -> File.ReadAllText(Path.Combine("site", x.Substring(1, x.Length - 1)))
+            // TODO config page is always empty
+            | Prefix "/config.html" _ -> configPage context.Request.Url.Query
             | Prefix "/?rss=" _ -> assembleRssFeeds client cacheLocation context.Request.Url.Query
             | _ -> landingPage
 
