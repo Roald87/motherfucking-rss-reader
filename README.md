@@ -2,6 +2,12 @@
 
 A basic RSS feed reader, in the spirit of the motherfucking websites.
 
+An rss reader without
+- registration
+- login
+- platform dependence
+- javascript
+
 ## Developers
 
 To install the project
