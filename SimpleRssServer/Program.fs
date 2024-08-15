@@ -7,7 +7,8 @@ let startServer cacheDir (prefixes: string list) =
     let listener = new HttpListener()
     prefixes |> List.iter listener.Prefixes.Add
     listener.Start()
-    printfn "Listening..."
+    let addresses = prefixes |> String.concat ", "
+    printfn $"Listening at %s{addresses}..."
 
     let httpClient = new Http.HttpClient()
 
@@ -27,5 +28,5 @@ let main argv =
     if not (Directory.Exists(cacheDir)) then
         Directory.CreateDirectory(cacheDir) |> ignore
 
-    startServer cacheDir [ "http://localhost:5000/" ] |> Async.RunSynchronously
+    startServer cacheDir [ "http://+:5000/" ] |> Async.RunSynchronously
     0
