@@ -87,7 +87,7 @@ let ``Test parseRss with zoesklot.xml`` () =
         { PostDate = Some(DateTime(2024, 8, 6, 13, 26, 32))
           Title = "Duitse shag"
           Url = "https://www.zoesklot.nl/duitse-shag/"
-          BaseUrl = "www.zoesklot.nl"
+          BaseUrl = "zoesklot.nl"
           Text =
             "Bij de kassa van de Jumbo ziet M. mij en ik kan niet meer vluchten naar een andere kassa. M., een magere vijftiger met donker achterovergekamd golvend haar; enkele tattoos, oorbel en kunstgebitje ken ik van de volkstuin. Als we oogcontact hebben dan word ik meegezogen in zijn persoonlijke wereld. “Het was zo druk man"
                 .Substring(0, ARTICLE_DESCRIPTION_LENGTH)
@@ -97,7 +97,7 @@ let ``Test parseRss with zoesklot.xml`` () =
         { PostDate = Some(DateTime(2024, 7, 24, 21, 8, 2))
           Title = "Wolf"
           Url = "https://www.zoesklot.nl/wolf/"
-          BaseUrl = "www.zoesklot.nl"
+          BaseUrl = "zoesklot.nl"
           Text =
             "Het was even groot nieuws in Nederland. Een wolf heeft een meisje gebeten. “De wolf beet haar zeer kort in de zij, maar beet niet door”, volgens de ouders. Het Landgoed Den Treek werd daarop deels afgesloten voor publiek. Om dit bericht in perspectief te plaatsen ging ik op zoek naar bijtincidenten van onze geliefde"
                 .Substring(0, ARTICLE_DESCRIPTION_LENGTH)

@@ -38,7 +38,7 @@ let parseRss (feedContent: string) : Article list =
 
         let baseUrl =
             let uri = Uri(link)
-            uri.Host
+            uri.Host.Replace("www.", "")
 
         let text =
             let content = stripHtml entry.Description
