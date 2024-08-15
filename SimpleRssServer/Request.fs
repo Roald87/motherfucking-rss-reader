@@ -177,7 +177,6 @@ let handleRequest client (cacheLocation: string) (context: HttpListenerContext) 
             | "/styles.css" as x ->
                 context.Response.ContentType <- "text/css"
                 File.ReadAllText(Path.Combine("site", x.Substring(1, x.Length - 1)))
-            // TODO config page is always empty
             | Prefix "/config.html" _ -> configPage context.Request.Url.Query
             | Prefix "/?rss=" _ -> assembleRssFeeds client cacheLocation context.Request.Url.Query
             | _ -> landingPage
