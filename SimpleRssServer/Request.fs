@@ -172,20 +172,24 @@ let handleRequest client (cacheLocation: string) (context: HttpListenerContext) 
 
         context.Response.ContentType <- "text/html"
 
-        let responseString =
+        let response =
             match context.Request.RawUrl with
             | "/styles.css" as x ->
                 context.Response.ContentType <- "text/css"
-                File.ReadAllText(Path.Combine("site", x.Substring(1, x.Length - 1)))
-            | Prefix "/config.html" _ -> configPage context.Request.Url.Query
-            | Prefix "/?rss=" _ -> assembleRssFeeds client cacheLocation context.Request.Url.Query
-            | _ -> landingPage
+                File.ReadAllBytes(Path.Combine("site", x.Substring(1, x.Length - 1)))
+            | "/favicon.ico" as x ->
+                context.Response.ContentType <- "image/vnd.microsoft.icon"
+                File.ReadAllBytes(Path.Combine("site", x.Substring(1, x.Length - 1)))
+            | Prefix "/config.html" _ -> configPage context.Request.Url.Query |> Encoding.UTF8.GetBytes
+            | Prefix "/?rss=" _ ->
+                assembleRssFeeds client cacheLocation context.Request.Url.Query
+                |> Encoding.UTF8.GetBytes
+            | _ -> landingPage |> Encoding.UTF8.GetBytes
 
-        let buffer = Encoding.UTF8.GetBytes(responseString)
-        context.Response.ContentLength64 <- int64 buffer.Length
+        context.Response.ContentLength64 <- int64 response.Length
 
         do!
-            context.Response.OutputStream.WriteAsync(buffer, 0, buffer.Length)
+            context.Response.OutputStream.WriteAsync(response, 0, response.Length)
             |> Async.AwaitTask
 
         context.Response.OutputStream.Close()
