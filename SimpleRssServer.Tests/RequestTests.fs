@@ -23,5 +23,5 @@ let ``Test getRequestInfo with empty string`` () =
 
 [<Fact>]
 let ``Test convertUrlToFilename`` () =
-    Assert.Equal("https_abc_com_test", convertUrlToFilename "https://abc.com/test")
-    Assert.Equal("https_abc_com_test_rss_blabla", convertUrlToFilename "https://abc.com/test?rss=blabla")
+    Assert.Equal("https_abc_com_test", convertUrlToValidFilename "https://abc.com/test")
+    Assert.Equal("https_abc_com_test_rss_blabla", convertUrlToValidFilename "https://abc.com/test?rss=blabla")

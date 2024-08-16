@@ -8,7 +8,7 @@ open System.Net.Http
 open RssParser
 open System.IO
 
-let convertUrlToFilename (url: string) : string =
+let convertUrlToValidFilename (url: string) : string =
     let replaceInvalidFilenameChars = Text.RegularExpressions.Regex("[.?=:/]+")
     replaceInvalidFilenameChars.Replace(url, "_")
 
@@ -34,7 +34,7 @@ let getAsync (client: HttpClient) (url: string) =
 
 let fetchWithCache client (cacheLocation: string) (url: string) =
     async {
-        let cacheFilename = convertUrlToFilename url
+        let cacheFilename = convertUrlToValidFilename url
         let cachePath = Path.Combine(cacheLocation, cacheFilename)
 
         let fileExists = File.Exists(cachePath)
@@ -67,7 +67,7 @@ let fetchAllRssFeeds client (cacheLocation: string) (urls: string list) =
     |> Async.RunSynchronously
 
 
-let rssHtmlItem article =
+let convertArticleToHtml article =
     let date =
         if article.PostDate.IsSome then
             $"@ %s{article.PostDate.Value.ToLongDateString()}"
@@ -107,7 +107,7 @@ let homepage query rssItems =
         rssItems
         |> Seq.collect parseRss
         |> Seq.sortByDescending (fun a -> a.PostDate)
-        |> Seq.map rssHtmlItem
+        |> Seq.map convertArticleToHtml
         |> String.concat ""
 
     header + body + rssFeeds + footer
