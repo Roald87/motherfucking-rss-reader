@@ -28,5 +28,11 @@ let main argv =
     if not (Directory.Exists(cacheDir)) then
         Directory.CreateDirectory(cacheDir) |> ignore
 
-    startServer cacheDir [ "http://+:5000/" ] |> Async.RunSynchronously
+    let prefixes = 
+        if argv.Length > 0 then 
+            argv |> Array.toList 
+        else 
+            [ "http://+:5000/" ]
+
+    startServer cacheDir prefixes |> Async.RunSynchronously
     0
