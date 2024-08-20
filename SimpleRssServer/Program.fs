@@ -1,6 +1,6 @@
 ﻿open System.Net
 open System.IO
-// open Microsoft.Extensions.Logging
+open Microsoft.Extensions.Logging
 
 open SimpleRssServer.Request
 open SimpleRssServer.Logging
@@ -11,7 +11,7 @@ let startServer cacheDir (prefixes: string list) =
     prefixes |> List.iter listener.Prefixes.Add
     listener.Start()
     let addresses = prefixes |> String.concat ", "
-    logger.LogInformation($"Listening at {addresses}...")
+    logger.LogInformation("Listening at {Addresses}", addresses)
 
     let httpClient = new Http.HttpClient()
 
@@ -37,8 +37,15 @@ let main argv =
         else
             [ "http://+:5000/" ]
 
-    // let factory = LoggerFactory.Create(fun builder -> builder.AddConsole() |> ignore)
-    // let logger = factory.CreateLogger("SimpleRssReader")
+    let serviceProvider = 
+        ServiceCollection()
+            .AddLogging(fun builder -> 
+                builder
+                    .SetMinimumLevel(LogLevel.Debug)
+                    .AddConsole())
+            .BuildServiceProvider()
+
+    let logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger("SimpleRssServer")
 
     startServer cacheDir prefixes |> Async.RunSynchronously
     0
