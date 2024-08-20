@@ -37,15 +37,5 @@ let main argv =
         else
             [ "http://+:5000/" ]
 
-    let serviceProvider = 
-        ServiceCollection()
-            .AddLogging(fun builder -> 
-                builder
-                    .SetMinimumLevel(LogLevel.Debug)
-                    .AddConsole())
-            .BuildServiceProvider()
-
-    let logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger("SimpleRssServer")
-
     startServer cacheDir prefixes |> Async.RunSynchronously
     0
