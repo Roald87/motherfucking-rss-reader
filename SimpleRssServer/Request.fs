@@ -7,6 +7,9 @@ open System.Web
 open System.Net.Http
 open RssParser
 open System.IO
+open Microsoft.Extensions.Logging
+
+open SimpleRssServer.Logging
 
 let convertUrlToValidFilename (url: string) : string =
     let replaceInvalidFilenameChars = Text.RegularExpressions.Regex("[.?=:/]+")
@@ -48,15 +51,15 @@ let fetchWithCache client (cacheLocation: string) (url: string) =
 
         if not fileExists || fileIsOld then
             if fileIsOld then
-                printfn $"Cached file %s{cachePath} is older than 1 hour. Fetching %s{url}"
+                logger.LogInformation($"Cached file {cachePath} is older than 1 hour. Fetching {url}")
             else
-                printfn $"Did not find cached file %s{cachePath}. Fetching %s{url}"
+                logger.LogInformation($"Did not find cached file {cachePath}. Fetching {url}")
 
             let! page = getAsync client url
             File.WriteAllText(cachePath, page)
             return page
         else
-            printfn $"Found cached file %s{cachePath} and it is up to date"
+            logger.LogInformation($"Found cached file {cachePath} and it is up to date")
             return File.ReadAllText(cachePath)
     }
 
@@ -168,7 +171,7 @@ let assembleRssFeeds client cacheLocation query =
 
 let handleRequest client (cacheLocation: string) (context: HttpListenerContext) =
     async {
-        printfn $"Received request %A{context.Request.Url}"
+        logger.LogInformation($"Received request {context.Request.Url}")
 
         context.Response.ContentType <- "text/html"
 
