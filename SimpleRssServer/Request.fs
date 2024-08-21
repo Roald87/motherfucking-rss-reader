@@ -12,7 +12,7 @@ open Microsoft.Extensions.Logging
 open SimpleRssServer.Logging
 
 let convertUrlToValidFilename (url: string) : string =
-    let replaceInvalidFilenameChars = Text.RegularExpressions.Regex("[.?=:/]+")
+    let replaceInvalidFilenameChars = RegularExpressions.Regex("[.?=:/]+")
     replaceInvalidFilenameChars.Replace(url, "_")
 
 let getRssUrls (context: string) : string list option =
