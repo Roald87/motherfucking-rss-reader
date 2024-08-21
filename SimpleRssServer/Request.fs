@@ -30,13 +30,16 @@ let getRssUrls (context: string) : string list option =
 // Fetch the contents of a web page
 let getAsync (client: HttpClient) (url: string) =
     async {
-        let! response = client.GetAsync(url) |> Async.AwaitTask
+        try
+            let! response = client.GetAsync(url) |> Async.AwaitTask
 
-        if response.IsSuccessStatusCode then
-            let! content = response.Content.ReadAsStringAsync() |> Async.AwaitTask
-            return Success content
-        else
-            return Failure $"Failed to get {url}, Error: {response.StatusCode}."
+            if response.IsSuccessStatusCode then
+                let! content = response.Content.ReadAsStringAsync() |> Async.AwaitTask
+                return Success content
+            else
+                return Failure $"Failed to get {url}. Error: {response.StatusCode}."
+        with ex ->
+            return Failure $"Failed to get {url}. {ex.GetType().Name} {ex.Message}"
     }
 
 let fetchWithCache client (cacheLocation: string) (url: string) =

@@ -27,17 +27,15 @@ let stripHtml (input: string) : string =
 let ARTICLE_DESCRIPTION_LENGTH = 255
 
 let createErrorFeed errorMessage =
-    // Create a new FeedItem with the current date and the title "Error"
-    let feedItem = FeedItem()
+    let feedItem = new FeedItem()
     feedItem.Title <- "Error"
     feedItem.PublishingDate <- Nullable(DateTime.Now)
     feedItem.Description <- errorMessage
+    feedItem.Link <- ""
 
-    // Create a new Feed and add the FeedItem to it
-    let customFeed = Feed()
-    customFeed.Items.Add(feedItem)
+    let customFeed = new Feed()
+    customFeed.Items <- [| feedItem |]
 
-    // Return the custom feed
     customFeed
 
 let parseRss (feedContent: Result<string, string>) : Article list =
@@ -58,8 +56,11 @@ let parseRss (feedContent: Result<string, string>) : Article list =
         let link = entry.Link
 
         let baseUrl =
-            let uri = Uri(link)
-            uri.Host.Replace("www.", "")
+            try
+                let uri = Uri(link)
+                uri.Host.Replace("www.", "")
+            with ex ->
+                ""
 
         let text =
             let content = stripHtml entry.Description

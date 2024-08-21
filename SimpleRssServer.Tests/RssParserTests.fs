@@ -2,6 +2,7 @@ module SimpleRssServer.Tests.RssParser
 
 open Xunit
 open SimpleRssServer.RssParser
+open SimpleRssServer.Helper
 open System
 
 [<Fact>]
@@ -129,3 +130,23 @@ let ``Test parseRss with nature.rss`` () =
     Assert.Equal(75, result.Length)
     Assert.Equal<Article>(expectedFirst, List.head result)
     Assert.Equal<Article>(expectedLast, List.last result)
+
+[<Fact>]
+let ``Test parseRss with Failure feedContent`` () =
+    let errorMessage = "An error occurred while fetching the feed."
+    let result = parseRss (Failure errorMessage)
+
+    let expected =
+        { PostDate = Some(DateTime.Now)
+          Title = "Error"
+          Url = ""
+          BaseUrl = ""
+          Text = errorMessage }
+
+    Assert.Single(result) |> ignore
+    let actual = List.head result
+    Assert.Equal(expected.Title, actual.Title)
+    Assert.Equal(expected.Text, actual.Text)
+    Assert.Equal(expected.Url, actual.Url)
+    Assert.Equal(expected.BaseUrl, actual.BaseUrl)
+    Assert.True((expected.PostDate.Value - actual.PostDate.Value).TotalSeconds < 1.0)
