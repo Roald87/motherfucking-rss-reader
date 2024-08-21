@@ -47,3 +47,13 @@ let ``Test getAsync with successful response`` () =
     let result = getAsync client "http://example.com" |> Async.RunSynchronously
 
     Assert.Equal(expectedContent, result)
+[<Fact>]
+let ``Test getAsync with unsuccessful response`` () =
+    let responseMessage = new HttpResponseMessage(HttpStatusCode.NotFound)
+    responseMessage.Content <- new StringContent("Not Found")
+
+    let handler = new MockHttpMessageHandler(responseMessage)
+    let client = new HttpClient(handler)
+
+    let ex = Assert.ThrowsAsync<HttpRequestException>(fun () -> getAsync client "http://example.com" |> Async.StartAsTask)
+    Assert.Contains("404", ex.Result.Message)
