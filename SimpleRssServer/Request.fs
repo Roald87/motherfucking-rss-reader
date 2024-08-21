@@ -85,7 +85,7 @@ let fetchAllRssFeeds client (cacheLocation: string) (urls: string list) =
 let convertArticleToHtml article =
     let date =
         if article.PostDate.IsSome then
-            $"@ %s{article.PostDate.Value.ToLongDateString()}"
+            $"on %s{article.PostDate.Value.ToLongDateString()}"
         else
             ""
 
