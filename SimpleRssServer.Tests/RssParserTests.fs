@@ -6,6 +6,27 @@ open SimpleRssServer.Helper
 open System
 
 [<Fact>]
+let ``Test parseRss with non-valid RSS feed`` () =
+    let invalidContent =
+        "<html><head><title>Not an RSS feed</title></head><body>This is a test.</body></html>"
+
+    let result = parseRss (Success invalidContent)
+
+    let expected =
+        { PostDate = Some(DateTime.Now)
+          Title = "Error"
+          Url = ""
+          BaseUrl = ""
+          Text = "Invalid RSS feed format. FeedTypeNotSupportedException: unknown feed type html" }
+
+    Assert.Single(result) |> ignore
+    let actual = List.head result
+    Assert.Equal(expected.Title, actual.Title)
+    Assert.Equal(expected.Text, actual.Text)
+    Assert.Equal(expected.Url, actual.Url)
+    Assert.Equal(expected.BaseUrl, actual.BaseUrl)
+    Assert.True((expected.PostDate.Value - actual.PostDate.Value).TotalSeconds < 1.0)
+
 let ``Test parseRss with roaldinch.xml`` () =
     let result = parseRssFromFile "data/roaldinch.xml"
 

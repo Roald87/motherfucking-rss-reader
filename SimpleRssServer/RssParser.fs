@@ -41,7 +41,11 @@ let createErrorFeed errorMessage =
 let parseRss (feedContent: Result<string, string>) : Article list =
     let feed =
         match feedContent with
-        | Success content -> FeedReader.ReadFromString(content)
+        | Success content ->
+            try
+                FeedReader.ReadFromString(content)
+            with ex ->
+                createErrorFeed $"Invalid RSS feed format. {ex.GetType().Name}: {ex.Message}"
         | Failure error -> createErrorFeed error
 
     feed.Items
