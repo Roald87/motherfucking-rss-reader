@@ -106,3 +106,26 @@ let ``Test parseRss with zoesklot.xml`` () =
     Assert.Equal(5, result.Length)
     Assert.Equal<Article>(expectedFirst, List.head result)
     Assert.Equal<Article>(expectedLast, List.last result)
+
+[<Fact>]
+let ``Test parseRss with nature.rss`` () =
+    let result = parseRssFromFile "data/nature.rss"
+
+    let expectedFirst =
+        { PostDate = Some(DateTime(2024, 8, 19, 22, 0, 0))
+          Title =
+            "Author Correction: Anti-TIGIT antibody improves PD-L1 blockade through myeloid and T<sub>reg</sub> cells"
+          Url = "https://www.nature.com/articles/s41586-024-07956-2"
+          BaseUrl = "nature.com"
+          Text = "" }
+
+    let expectedLast =
+        { PostDate = Some(DateTime(2024, 8, 13, 22, 0, 0))
+          Title = "Stonehenge’s enigmatic centre stone was hauled 800 kilometres from Scotland"
+          Url = "https://www.nature.com/articles/d41586-024-02584-2"
+          BaseUrl = "nature.com"
+          Text = "" }
+
+    Assert.Equal(75, result.Length)
+    Assert.Equal<Article>(expectedFirst, List.head result)
+    Assert.Equal<Article>(expectedLast, List.last result)

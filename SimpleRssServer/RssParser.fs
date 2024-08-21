@@ -13,12 +13,15 @@ type Article =
       Text: string }
 
 let stripHtml (input: string) : string =
-    let regex = Text.RegularExpressions.Regex("<.*?>")
-    let noHtml = regex.Replace(input, "")
-    let removeMutliSpaces = Text.RegularExpressions.Regex("\s+")
+    if String.IsNullOrWhiteSpace(input) then
+        ""
+    else
+        let regex = Text.RegularExpressions.Regex("<.*?>")
+        let noHtml = regex.Replace(input, "")
+        let removeMutliSpaces = Text.RegularExpressions.Regex("\s+")
 
-    noHtml.Replace("\n", " ").Replace("\r", "").Trim()
-    |> fun s -> removeMutliSpaces.Replace(s, " ")
+        noHtml.Replace("\n", " ").Replace("\r", "").Trim()
+        |> fun s -> removeMutliSpaces.Replace(s, " ")
 
 let ARTICLE_DESCRIPTION_LENGTH = 255
 
