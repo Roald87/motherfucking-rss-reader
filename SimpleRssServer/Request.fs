@@ -56,11 +56,12 @@ let fetchWithCache client (cacheLocation: string) (url: string) =
                 logger.LogInformation($"Did not find cached file {cachePath}. Fetching {url}")
 
             let! page = getAsync client url
-            File.WriteAllText(cachePath, page)
+            File.WriteAllTextAsync(cachePath, page) |> ignore
             return page
         else
             logger.LogInformation($"Found cached file {cachePath} and it is up to date")
-            return File.ReadAllText(cachePath)
+            let! content = File.ReadAllTextAsync(cachePath) |> Async.AwaitTask
+            return content
     }
 
 let fetchAllRssFeeds client (cacheLocation: string) (urls: string list) =
