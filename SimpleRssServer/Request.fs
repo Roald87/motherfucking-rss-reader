@@ -39,7 +39,7 @@ let getAsync (client: HttpClient) (url: string) =
             else
                 return Failure $"Failed to get {url}. Error: {response.StatusCode}."
         with ex ->
-            return Failure $"Failed to get {url}. {ex.GetType().Name} {ex.Message}"
+            return Failure $"Failed to get {url}. {ex.GetType().Name}: {ex.Message}"
     }
 
 let fetchWithCache client (cacheLocation: string) (url: string) =
