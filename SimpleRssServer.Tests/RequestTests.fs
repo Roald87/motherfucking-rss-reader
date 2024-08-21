@@ -5,6 +5,7 @@ open SimpleRssServer.Request
 open System.Net.Http
 open System.Threading
 open System.Threading.Tasks
+open System.Net
 
 [<Fact>]
 let ``Test getRequestInfo`` () =
