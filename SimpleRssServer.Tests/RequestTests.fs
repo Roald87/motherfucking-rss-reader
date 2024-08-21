@@ -2,6 +2,9 @@ module SimpleRssServer.Tests.RequestTests
 
 open Xunit
 open SimpleRssServer.Request
+open System.Net.Http
+open System.Threading
+open System.Threading.Tasks
 
 [<Fact>]
 let ``Test getRequestInfo`` () =
@@ -25,3 +28,21 @@ let ``Test getRequestInfo with empty string`` () =
 let ``Test convertUrlToFilename`` () =
     Assert.Equal("https_abc_com_test", convertUrlToValidFilename "https://abc.com/test")
     Assert.Equal("https_abc_com_test_rss_blabla", convertUrlToValidFilename "https://abc.com/test?rss=blabla")
+type MockHttpMessageHandler(response: HttpResponseMessage) =
+    inherit HttpMessageHandler()
+
+    override _.SendAsync(request: HttpRequestMessage, cancellationToken: CancellationToken) =
+        Task.FromResult(response)
+
+[<Fact>]
+let ``Test getAsync with successful response`` () =
+    let expectedContent = "Hello, world!"
+    let responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
+    responseMessage.Content <- new StringContent(expectedContent)
+
+    let handler = new MockHttpMessageHandler(responseMessage)
+    let client = new HttpClient(handler)
+
+    let result = getAsync client "http://example.com" |> Async.RunSynchronously
+
+    Assert.Equal(expectedContent, result)
