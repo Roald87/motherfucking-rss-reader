@@ -10,6 +10,7 @@ open System.IO
 open Microsoft.Extensions.Logging
 
 open SimpleRssServer.Logging
+open SimpleRssServer.Helper
 
 let convertUrlToValidFilename (url: string) : string =
     let replaceInvalidFilenameChars = RegularExpressions.Regex("[.?=:/]+")
@@ -30,9 +31,12 @@ let getRssUrls (context: string) : string list option =
 let getAsync (client: HttpClient) (url: string) =
     async {
         let! response = client.GetAsync(url) |> Async.AwaitTask
-        response.EnsureSuccessStatusCode() |> ignore
-        let! content = response.Content.ReadAsStringAsync() |> Async.AwaitTask
-        return content
+
+        if response.IsSuccessStatusCode then
+            let! content = response.Content.ReadAsStringAsync() |> Async.AwaitTask
+            return Success content
+        else
+            return Failure $"Failed to get {url}, Error: {response.StatusCode}."
     }
 
 let fetchWithCache client (cacheLocation: string) (url: string) =
@@ -56,12 +60,16 @@ let fetchWithCache client (cacheLocation: string) (url: string) =
                 logger.LogInformation($"Did not find cached file {cachePath}. Fetching {url}")
 
             let! page = getAsync client url
-            File.WriteAllTextAsync(cachePath, page) |> ignore
+
+            match page with
+            | Success content -> File.WriteAllTextAsync(cachePath, content) |> ignore
+            | Failure message -> ()
+
             return page
         else
             logger.LogInformation($"Found cached file {cachePath} and it is up to date")
             let! content = File.ReadAllTextAsync(cachePath) |> Async.AwaitTask
-            return content
+            return Success content
     }
 
 let fetchAllRssFeeds client (cacheLocation: string) (urls: string list) =

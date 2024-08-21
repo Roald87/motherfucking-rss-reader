@@ -4,6 +4,7 @@ open System
 open System.IO
 
 open CodeHollow.FeedReader
+open SimpleRssServer.Helper
 
 type Article =
     { PostDate: DateTime option
@@ -25,8 +26,25 @@ let stripHtml (input: string) : string =
 
 let ARTICLE_DESCRIPTION_LENGTH = 255
 
-let parseRss (feedContent: string) : Article list =
-    let feed = FeedReader.ReadFromString(feedContent)
+let createErrorFeed errorMessage =
+    // Create a new FeedItem with the current date and the title "Error"
+    let feedItem = FeedItem()
+    feedItem.Title <- "Error"
+    feedItem.PublishingDate <- Nullable(DateTime.Now)
+    feedItem.Description <- errorMessage
+
+    // Create a new Feed and add the FeedItem to it
+    let customFeed = Feed()
+    customFeed.Items.Add(feedItem)
+
+    // Return the custom feed
+    customFeed
+
+let parseRss (feedContent: Result<string, string>) : Article list =
+    let feed =
+        match feedContent with
+        | Success content -> FeedReader.ReadFromString(content)
+        | Failure error -> createErrorFeed error
 
     feed.Items
     |> Seq.map (fun entry ->
@@ -59,4 +77,13 @@ let parseRss (feedContent: string) : Article list =
     |> Seq.toList
 
 
-let parseRssFromFile (fileName) = parseRss (File.ReadAllText fileName)
+let parseRssFromFile fileName =
+    try
+        let content = File.ReadAllText(fileName) |> Success
+        parseRss content
+    with ex ->
+        [ { PostDate = Some DateTime.Now
+            Title = "Error"
+            Url = fileName
+            BaseUrl = fileName
+            Text = $"{ex.GetType().Name} {ex.Message}" } ]

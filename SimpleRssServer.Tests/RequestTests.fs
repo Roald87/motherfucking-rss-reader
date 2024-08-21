@@ -1,6 +1,7 @@
 module SimpleRssServer.Tests.RequestTests
 
 open Xunit
+open SimpleRssServer.Helper
 open SimpleRssServer.Request
 open System.Net.Http
 open System.Threading
@@ -29,11 +30,11 @@ let ``Test getRequestInfo with empty string`` () =
 let ``Test convertUrlToFilename`` () =
     Assert.Equal("https_abc_com_test", convertUrlToValidFilename "https://abc.com/test")
     Assert.Equal("https_abc_com_test_rss_blabla", convertUrlToValidFilename "https://abc.com/test?rss=blabla")
+
 type MockHttpMessageHandler(response: HttpResponseMessage) =
     inherit HttpMessageHandler()
 
-    override _.SendAsync(request: HttpRequestMessage, cancellationToken: CancellationToken) =
-        Task.FromResult(response)
+    override _.SendAsync(request: HttpRequestMessage, cancellationToken: CancellationToken) = Task.FromResult(response)
 
 [<Fact>]
 let ``Test getAsync with successful response`` () =
@@ -46,14 +47,18 @@ let ``Test getAsync with successful response`` () =
 
     let result = getAsync client "http://example.com" |> Async.RunSynchronously
 
-    Assert.Equal(expectedContent, result)
+    match result with
+    | Success result -> Assert.Equal(expectedContent, result)
+    | Failure error -> Assert.True(false, error)
+
 [<Fact>]
-let ``Test getAsync with unsuccessful response`` () =
-    let responseMessage = new HttpResponseMessage(HttpStatusCode.NotFound)
-    responseMessage.Content <- new StringContent("Not Found")
+let ``Test getAsync with unsuccessful response on real page`` () =
+    let client = new HttpClient()
 
-    let handler = new MockHttpMessageHandler(responseMessage)
-    let client = new HttpClient(handler)
+    let response =
+        getAsync client "https://thisurldoesntexistforsureordoesit.com"
+        |> Async.RunSynchronously
 
-    let ex = Assert.ThrowsAsync<HttpRequestException>(fun () -> getAsync client "http://example.com" |> Async.StartAsTask)
-    Assert.Contains("404", ex.Result.Message)
+    match response with
+    | Success _ -> Assert.False(true, "Expected Failure but got Success")
+    | Failure errorMsg -> Assert.Contains("Exception", errorMsg)
