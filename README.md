@@ -99,6 +99,3 @@ mfrssreader-server
 - logs: `/var/log/mfrssreader-server/`
 - source code: `~/motherfucking-rss-reader`
 - binaries: `/var/www/rss`
-
-## TODO
-- [ ] Auto redirect to https
