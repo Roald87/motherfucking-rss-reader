@@ -1,0 +1,15 @@
+[Unit]
+Description=HTTP server for motherfucking RSS reader
+After=network.target
+
+[Service]
+ExecStart=/var/www/rss/SimpleRssServer http://localhost:8000/
+WorkingDirectory=/var/www/rss
+User=rss
+Group=1000
+Restart=always
+StandardOutput=append:/var/log/mfrssreader-server/rss.log
+StandardError=append:/var/log/mfrssreader-server/rss.err
+
+[Install]
+WantedBy=multi-user.target
