@@ -189,6 +189,8 @@ let handleRequest client (cacheLocation: string) (context: HttpListenerContext) 
             match context.Request.RawUrl with
             | Prefix "/config.html" _ -> configPage context.Request.Url.Query
             | Prefix "/?rss=" _ -> assembleRssFeeds client cacheLocation context.Request.Url.Query
+            | "/robots.txt" -> File.ReadAllText(Path.Combine("site", "robots.txt"))
+            | "/sitemap.xml" -> File.ReadAllText(Path.Combine("site", "sitemap.xml"))
             | _ -> landingPage
 
         let buffer = Encoding.UTF8.GetBytes(responseString)

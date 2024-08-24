@@ -1,0 +1,5 @@
+# Only allow crawling of the home page
+User-agent: *
+Disallow: /
+Allow: /$
+Sitemap: https://motherfuckingrssreader.com/sitemap.xml
