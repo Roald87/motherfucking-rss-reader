@@ -34,6 +34,7 @@ Starting the server. You can watch it at 127.0.0.1:5000
 
 1. Create the folder for the binaries. This is where the executable for the server is going to be.
     - `sudo mkdir /var/www/rss`
+    - `sudo chown -R rss:1000 /var/www/rss`
 
 1. After creating the service file, reload the systemctl manager configuration to recognize the new service:
     - `sudo systemctl daemon-reload`
