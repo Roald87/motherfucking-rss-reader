@@ -134,31 +134,37 @@ let configPage query =
         <div class="header">
             <h1>Configure RSS Reader</h1>
         </div>
-        <form id="rss-config-form" method="GET" action="/">
     """
 
     let rssFeeds = getRssUrls query
 
     let urlFields =
         match rssFeeds with
-        | Some urls when query.Contains("addField=true") ->
-            let newField = "<input type='text' name='rss'><br>"
-
-            (urls
-             |> List.map (fun url -> $"<input type='text' name='rss' value='%s{url}'><br>")
-             |> String.concat "\n")
-            + newField
-        | Some urls ->
-            urls
-            |> List.map (fun url -> $"<input type='text' name='rss' value='%s{url}'><br>")
-            |> String.concat "\n"
+        | Some urls -> urls |> String.concat "\n"
         | None -> ""
 
-    let emptyField =
-        $"<input type='text' name='rss'><br><input type='submit' value='Submit'>
-        <button type='submit' formaction='/config.html' name=''>Add another field</button></form>"
+    let textArea =
+        $"""
+        <form id='feed-form'>
+            <label for='feeds'>Enter feed URLs (one per line):</label><br>
+            <textarea id='feeds' rows='10' cols='30'>{urlFields}</textarea><br>
+            <button type='button' onclick='submitFeeds()'>Submit</button>
+        </form>
+        """
 
-    header + body + urlFields + emptyField + footer
+    let filterFeeds =
+        """
+        <script>
+            function submitFeeds() {
+                const feeds = document.getElementById('feeds').value.trim().split('\n');
+                const filteredFeeds = feeds.filter(feed => feed.trim() !== '');
+                const queryString = filteredFeeds.map(feed => `rss=${encodeURIComponent(feed.trim())}`).join('&');
+                window.location.href = `/?${queryString}`;
+            }
+        </script>
+        """
+
+    header + body + textArea + filterFeeds + footer
 
 // https://stackoverflow.com/a/3722671/6329629
 let (|Prefix|_|) (p: string) (s: string) =
