@@ -6,7 +6,6 @@ An RSS reader without:
 - registration
 - login
 - platform dependence
-- javascript
 
 ![screenshot of the RSS reader with three feeds from seth's blog, roaldin.ch and nature.com](website.png)
 
