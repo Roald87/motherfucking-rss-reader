@@ -9,9 +9,9 @@ An RSS reader without:
 
 ![screenshot of the RSS reader with three feeds from seth's blog, roaldin.ch and nature.com](website.png)
 
-## Blogs
+## Feed inspiration
 
-For inspiration for RSS feeds, see the [most popular links posted on Hackernews](inspiration/hn-links.tsv) or the [most popular blogs posted on Hackernews](inspiration/hn-blogs.tsv), between 26 August 2023 - 26 August 2024.
+For inspiration of RSS feeds, see the [most popular links posted on Hackernews](inspiration/hn-links.tsv) or the [most popular blogs posted on Hackernews](inspiration/hn-blogs.tsv), between 26 August 2023 - 26 August 2024.
 
 ## Developers
 
