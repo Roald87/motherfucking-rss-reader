@@ -1,5 +1,6 @@
+# The most popular blogs posted over the last year on Hackernews.
+# Blog likelyhood scores were done by ChatGPT.
 # Data retrieved on 26 August 2024 from https://play.clickhouse.com/ with query.txt
-# Blog likelyhood scores were done by ChatGPT
 url                                    occurrence  score
 oldvcr.blogspot.com                    19          10
 blog.haschek.at                        6           10

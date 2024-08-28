@@ -1,3 +1,4 @@
+# The most popular links posted over the last year on Hackernews.
 # Data retrieved on 26 August 2024 from https://play.clickhouse.com/ with query.txt
 url                                    occurrence
 github.com                             3018
