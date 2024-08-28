@@ -1,0 +1,35 @@
+# https://play.clickhouse.com/play?user=play#V0lUSCBSYW5rZWRTdG9yaWVzIEFTICgKICAgIFNFTEVDVCBpZCwgdXJsLCB0aXRsZSwgdHlwZSwgc2NvcmUsIHRpbWUsCiAgICAgICAgICAgUk9XX05VTUJFUigpIE9WRVIgKFBBUlRJVElPTiBCWSB1cmwgT1JERVIgQlkgc2NvcmUgREVTQywgdGltZSBERVNDKSBBUyBybgogICAgRlJPTSBoYWNrZXJuZXdzX2hpc3RvcnkKICAgIFdIRVJFIHR5cGUgPSAnc3RvcnknIEFORCB1cmwgIT0gJycgQU5EIHNjb3JlID4gMTAgQU5EIHRpbWUgPj0gREFURV9TVUIoTk9XKCksIElOVEVSVkFMIDEgWUVBUikKKSwKQmFzZVVSTHMgQVMgKAogICAgU0VMRUNUIAogICAgICAgIGlkLAogICAgICAgIHVybCwKICAgICAgICB0aXRsZSwKICAgICAgICB0eXBlLAogICAgICAgIHNjb3JlLAogICAgICAgIHRpbWUsCiAgICAgICAgLS0gRXh0cmFjdCB0aGUgYmFzZSBVUkwgZnJvbSB0aGUgZnVsbCBVUkwKICAgICAgICBSRUdFWFBfUkVQTEFDRSgKICAgICAgICAgICAgUkVHRVhQX1JFUExBQ0UoCiAgICAgICAgICAgICAgICBSRUdFWFBfUkVQTEFDRSh1cmwsICdeaHR0cHM/Oi8vJywgJycpLCAgLS0gUmVtb3ZlIHByb3RvY29sIChodHRwOi8vIG9yIGh0dHBzOi8vKQogICAgICAgICAgICAgICAgJy8uKiQnLCAgLS0gUmVtb3ZlIHBhdGggYWZ0ZXIgdGhlIGRvbWFpbgogICAgICAgICAgICAgICAgJycKICAgICAgICAgICAgKSwKICAgICAgICAgICAgJ153d3dcLicsICAtLSBSZW1vdmUgd3d3IHByZWZpeCBpZiBwcmVzZW50CiAgICAgICAgICAgICcnCiAgICAgICAgKSBBUyBiYXNlX3VybAogICAgRlJPTSBSYW5rZWRTdG9yaWVzCiAgICBXSEVSRSBybiA9IDEKKQpTRUxFQ1QgYmFzZV91cmwsIENPVU5UKCopIEFTIG9jY3VycmVuY2VzCkZST00gQmFzZVVSTHMKR1JPVVAgQlkgYmFzZV91cmwKSEFWSU5HIENPVU5UKCopID49IDUKT1JERVIgQlkgb2NjdXJyZW5jZXMgREVTQzsK
+# https://play.clickhouse.com/
+# Collects the most popular urls shared on hackernews in the past year
+WITH RankedStories AS (
+    SELECT id, url, title, type, score, time,
+           ROW_NUMBER() OVER (PARTITION BY url ORDER BY score DESC, time DESC) AS rn
+    FROM hackernews_history
+    WHERE type = 'story' AND url != '' AND score > 10 AND time >= DATE_SUB(NOW(), INTERVAL 1 YEAR)
+),
+BaseURLs AS (
+    SELECT
+        id,
+        url,
+        title,
+        type,
+        score,
+        time,
+        -- Extract the base URL from the full URL
+        REGEXP_REPLACE(
+            REGEXP_REPLACE(
+                REGEXP_REPLACE(url, '^https?://', ''),  -- Remove protocol (http:// or https://)
+                '/.*$',  -- Remove path after the domain
+                ''
+            ),
+            '^www\.',  -- Remove www prefix if present
+            ''
+        ) AS base_url
+    FROM RankedStories
+    WHERE rn = 1
+)
+SELECT base_url, COUNT(*) AS occurrences
+FROM BaseURLs
+GROUP BY base_url
+HAVING COUNT(*) >= 5
+ORDER BY occurrences DESC;
