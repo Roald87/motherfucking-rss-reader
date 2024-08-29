@@ -35,10 +35,9 @@ let getAsync (client: HttpClient) (url: string) (lastModified: DateTime option) 
 
             let date =
                 match lastModified with
-                | Some date -> date
-                | None -> DateTime.Now
+                | Some date -> request.Headers.IfModifiedSince <- date
+                | None -> ()
 
-            request.Headers.IfModifiedSince <- date
             let! response = client.SendAsync(request) |> Async.AwaitTask
 
             if response.IsSuccessStatusCode then
