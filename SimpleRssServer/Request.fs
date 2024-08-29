@@ -28,14 +28,24 @@ let getRssUrls (context: string) : string list option =
             None
 
 // Fetch the contents of a web page
-let getAsync (client: HttpClient) (url: string) =
+let getAsync (client: HttpClient) (url: string) (lastModified: DateTime option) =
     async {
         try
-            let! response = client.GetAsync(url) |> Async.AwaitTask
+            let request = new HttpRequestMessage(HttpMethod.Get, url)
+
+            let date =
+                match lastModified with
+                | Some date -> date
+                | None -> DateTime.Now
+
+            request.Headers.IfModifiedSince <- date
+            let! response = client.SendAsync(request) |> Async.AwaitTask
 
             if response.IsSuccessStatusCode then
                 let! content = response.Content.ReadAsStringAsync() |> Async.AwaitTask
                 return Success content
+            else if response.StatusCode = HttpStatusCode.NotModified then
+                return Success "No changes"
             else
                 return Failure $"Failed to get {url}. Error: {response.StatusCode}."
         with ex ->
@@ -62,13 +72,26 @@ let fetchWithCache client (cacheLocation: string) (url: string) =
             else
                 logger.LogInformation($"Did not find cached file {cachePath}. Fetching {url}")
 
-            let! page = getAsync client url
+            let lastModified =
+                if fileExists then
+                    File.GetLastWriteTime(cachePath) |> Some
+                else
+                    None
+
+            let! page = getAsync client url lastModified
 
             match page with
-            | Success content -> File.WriteAllTextAsync(cachePath, content) |> ignore
-            | Failure message -> ()
-
-            return page
+            | Success "No changes" ->
+                try
+                    logger.LogInformation($"Reading from cached file {cachePath}, because feed didn't change")
+                    let! content = File.ReadAllTextAsync(cachePath) |> Async.AwaitTask
+                    return Success content
+                with ex ->
+                    return Failure $"Failed to read file {cachePath}. {ex.GetType().Name}: {ex.Message}"
+            | Success content ->
+                File.WriteAllTextAsync(cachePath, content) |> ignore
+                return page
+            | Failure _ -> return page
         else
             logger.LogInformation($"Found cached file {cachePath} and it is up to date")
             let! content = File.ReadAllTextAsync(cachePath) |> Async.AwaitTask

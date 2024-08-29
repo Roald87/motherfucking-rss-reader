@@ -3,6 +3,7 @@ module SimpleRssServer.Tests.RequestTests
 open Xunit
 open SimpleRssServer.Helper
 open SimpleRssServer.Request
+open System
 open System.Net.Http
 open System.Threading
 open System.Threading.Tasks
@@ -45,7 +46,9 @@ let ``Test getAsync with successful response`` () =
     let handler = new MockHttpMessageHandler(responseMessage)
     let client = new HttpClient(handler)
 
-    let result = getAsync client "http://example.com" |> Async.RunSynchronously
+    let result =
+        getAsync client "http://example.com" (Some DateTime.Now)
+        |> Async.RunSynchronously
 
     match result with
     | Success result -> Assert.Equal(expectedContent, result)
@@ -56,7 +59,7 @@ let ``Test getAsync with unsuccessful response on real page`` () =
     let client = new HttpClient()
 
     let response =
-        getAsync client "https://thisurldoesntexistforsureordoesit.com"
+        getAsync client "https://thisurldoesntexistforsureordoesit.com" (Some DateTime.Now)
         |> Async.RunSynchronously
 
     match response with
