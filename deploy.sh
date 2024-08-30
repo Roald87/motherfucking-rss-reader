@@ -1,5 +1,4 @@
 git pull
-cd ..
 dotnet publish
 sudo systemctl stop mfrssreader-server.service
 rm -rf /var/www/rss/*
