@@ -172,3 +172,34 @@ let ``Test fetchWithCache with existing cache less than 1 hour old`` () =
     // Clean up
     if File.Exists(filePath) then
         File.Delete(filePath)
+
+[<Fact>]
+let ``Test fetchWithCache with existing cache more than 1 hour old`` () =
+    let url = "http://example.com/test"
+    let cachedContent = "Old cached response content"
+    let newContent = "New response content"
+    let responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
+    responseMessage.Content <- new StringContent(newContent)
+
+    let handler = new MockHttpResponseHandler(responseMessage)
+    let client = new HttpClient(handler)
+
+    let filename = convertUrlToValidFilename url
+    let currentDir = Directory.GetCurrentDirectory()
+    let filePath = Path.Combine(currentDir, filename)
+
+    // Write the cached content to the file and set its last write time to more than 1 hour ago
+    File.WriteAllText(filePath, cachedContent)
+    File.SetLastWriteTime(filePath, DateTime.Now.AddHours(-2.0))
+
+    let result = fetchWithCache client currentDir url |> Async.RunSynchronously
+
+    match result with
+    | Success content ->
+        Assert.Equal(newContent, content)
+        let fileContent = File.ReadAllText(filePath)
+        Assert.Equal(newContent, fileContent)
+    | Failure error -> Assert.True(false, error)
+
+    if File.Exists(filePath) then
+        File.Delete(filePath)
