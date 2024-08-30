@@ -84,6 +84,7 @@ let fetchWithCache client (cacheLocation: string) (url: string) =
                 try
                     logger.LogInformation($"Reading from cached file {cachePath}, because feed didn't change")
                     let! content = File.ReadAllTextAsync(cachePath) |> Async.AwaitTask
+                    File.SetLastWriteTime(cachePath, DateTime.Now)
                     return Success content
                 with ex ->
                     return Failure $"Failed to read file {cachePath}. {ex.GetType().Name}: {ex.Message}"
