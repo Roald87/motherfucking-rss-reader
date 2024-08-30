@@ -28,15 +28,14 @@ let getRssUrls (context: string) : string list option =
             None
 
 // Fetch the contents of a web page
-let getAsync (client: HttpClient) (url: string) (lastModified: DateTime option) =
+let getAsync (client: HttpClient) (url: string) (lastModified: DateTimeOffset option) =
     async {
         try
             let request = new HttpRequestMessage(HttpMethod.Get, url)
 
-            let date =
-                match lastModified with
-                | Some date -> request.Headers.IfModifiedSince <- date
-                | None -> ()
+            match lastModified with
+            | Some date -> request.Headers.IfModifiedSince <- date
+            | None -> ()
 
             let! response = client.SendAsync(request) |> Async.AwaitTask
 
@@ -60,8 +59,8 @@ let fetchWithCache client (cacheLocation: string) (url: string) =
 
         let fileIsOld =
             if fileExists then
-                let lastWriteTime = File.GetLastWriteTime(cachePath)
-                (DateTime.Now - lastWriteTime).TotalHours > 1.0
+                let lastWriteTime = File.GetLastWriteTime(cachePath) |> DateTimeOffset
+                (DateTimeOffset.Now - lastWriteTime).TotalHours > 1.0
             else
                 false
 
@@ -73,7 +72,7 @@ let fetchWithCache client (cacheLocation: string) (url: string) =
 
             let lastModified =
                 if fileExists then
-                    File.GetLastWriteTime(cachePath) |> Some
+                    File.GetLastWriteTime(cachePath) |> DateTimeOffset |> Some
                 else
                     None
 
