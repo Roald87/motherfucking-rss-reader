@@ -8,6 +8,7 @@ open System.Net.Http
 open System.Threading
 open System.Threading.Tasks
 open System.Net
+open System.IO
 
 [<Fact>]
 let ``Test getRequestInfo`` () =
@@ -111,3 +112,34 @@ let ``GetAsync returns NotModified or OK based on IfModifiedSince header`` () =
     match result3 with
     | Success content -> Assert.Equal("Content has changed since the last modification date", content)
     | Failure error -> failwithf "Expected success, but got failure: %s" error
+
+[<Fact>]
+let ``Test fetchWithCache with no cache`` () =
+    let url = "http://example.com/test"
+    let expectedContent = "Mock response content"
+    let responseMessage = new HttpResponseMessage(HttpStatusCode.OK)
+    responseMessage.Content <- new StringContent(expectedContent)
+
+    let handler = new MockHttpResponseHandler(responseMessage)
+    let client = new HttpClient(handler)
+
+    let filename = convertUrlToValidFilename url
+    let currentDir = Directory.GetCurrentDirectory()
+    let filePath = Path.Combine(currentDir, filename)
+
+    // Ensure the file does not exist before the test
+    if File.Exists(filePath) then
+        File.Delete(filePath)
+
+    let result = fetchWithCache client currentDir url |> Async.RunSynchronously
+
+    match result with
+    | Success _ ->
+        Assert.True(File.Exists(filePath), "Expected file to be created")
+        let fileContent = File.ReadAllText(filePath)
+        Assert.Equal(expectedContent, fileContent)
+    | Failure error -> Assert.True(false, error)
+
+    // Clean up
+    if File.Exists(filePath) then
+        File.Delete(filePath)
