@@ -1,14 +1,15 @@
 module SimpleRssServer.Tests.RequestTests
 
+open System
+open System.IO
+open System.Net
+open System.Net.Http
+open System.Threading.Tasks
+
 open Xunit
+
 open SimpleRssServer.Helper
 open SimpleRssServer.Request
-open System
-open System.Net.Http
-open System.Threading
-open System.Threading.Tasks
-open System.Net
-open System.IO
 
 [<Fact>]
 let ``Test getRequestInfo`` () =

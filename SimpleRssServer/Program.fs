@@ -1,10 +1,9 @@
-﻿open System.Net
+﻿open Microsoft.Extensions.Logging
 open System.IO
-open Microsoft.Extensions.Logging
+open System.Net
 
-open SimpleRssServer.Request
 open SimpleRssServer.Logging
-
+open SimpleRssServer.Request
 
 let startServer cacheDir (prefixes: string list) =
     let listener = new HttpListener()

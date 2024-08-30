@@ -1,8 +1,9 @@
 module SimpleRssServer.Tests.CodeHollowFeedReaderTests
 
-open Xunit
 open System
+
 open CodeHollow.FeedReader
+open Xunit
 
 [<Fact>]
 let ``test CodeHollow.FeedReader with roaldinch`` () =

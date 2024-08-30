@@ -1,9 +1,11 @@
 module SimpleRssServer.Tests.RssParser
 
-open Xunit
-open SimpleRssServer.RssParser
-open SimpleRssServer.Helper
 open System
+
+open Xunit
+
+open SimpleRssServer.Helper
+open SimpleRssServer.RssParser
 
 [<Fact>]
 let ``Test parseRss with non-valid RSS feed`` () =

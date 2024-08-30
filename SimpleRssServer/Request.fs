@@ -1,16 +1,17 @@
 module SimpleRssServer.Request
 
-open System.Net
-open System.Text
-open System
-open System.Web
-open System.Net.Http
-open RssParser
-open System.IO
 open Microsoft.Extensions.Logging
+open System
+open System.IO
+open System.Net
+open System.Net.Http
+open System.Text
+open System.Web
 
-open SimpleRssServer.Logging
+open RssParser
+
 open SimpleRssServer.Helper
+open SimpleRssServer.Logging
 
 let convertUrlToValidFilename (url: string) : string =
     let replaceInvalidFilenameChars = RegularExpressions.Regex("[.?=:/]+")
