@@ -54,6 +54,12 @@ let parseRss (feedContent: Result<string, string>) : Article list =
         let postDate =
             if entry.PublishingDate.HasValue then
                 Some(entry.PublishingDate.Value)
+            else if feed.Type = FeedType.Atom then
+                let atomEntry = entry.SpecificItem :?> Feeds.AtomFeedItem
+
+                match atomEntry.UpdatedDate.HasValue with
+                | false -> None
+                | true -> Some(atomEntry.UpdatedDate.Value)
             else
                 None
 

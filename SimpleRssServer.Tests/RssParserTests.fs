@@ -187,3 +187,16 @@ let ``Test parseRss with Failure feedContent`` () =
     Assert.Equal(expected.Url, actual.Url)
     Assert.Equal(expected.BaseUrl, actual.BaseUrl)
     Assert.True((expected.PostDate.Value - actual.PostDate.Value).TotalSeconds < 1.0)
+
+[<Fact>]
+let ``Test parsing date if only update date is available`` () =
+    let result = parseRssFromFile "data/rachel.xml"
+
+    let expectedFirst = Some(DateTime(2024, 8, 18, 23, 16, 27))
+    let actualFirst = result |> List.head
+    Assert.True(actualFirst.PostDate.IsSome)
+    Assert.True((expectedFirst.Value - actualFirst.PostDate.Value).TotalSeconds < 1.0)
+
+    let expectedLast = Some(DateTime(2023, 2, 24, 8, 45, 28))
+    let actualLast = result |> List.last
+    Assert.True((expectedLast.Value - actualLast.PostDate.Value).TotalSeconds < 1.0)
