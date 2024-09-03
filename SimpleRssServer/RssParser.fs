@@ -74,12 +74,20 @@ let parseRss (feedContent: Result<string, string>) : Article list =
                 ""
 
         let text =
-            let content = stripHtml entry.Description
+            let content =
+                if not (entry.Description |> String.IsNullOrEmpty) then
+                    entry.Description
+                else if not (entry.Content |> String.IsNullOrEmpty) then
+                    entry.Content
+                else
+                    ""
 
-            if content.Length > ARTICLE_DESCRIPTION_LENGTH then
-                content.Substring(0, ARTICLE_DESCRIPTION_LENGTH) + "..."
+            let cleanedContent = content |> stripHtml
+
+            if cleanedContent.Length > ARTICLE_DESCRIPTION_LENGTH then
+                cleanedContent.Substring(0, ARTICLE_DESCRIPTION_LENGTH) + "..."
             else
-                content
+                cleanedContent
 
         { PostDate = postDate
           Title = title

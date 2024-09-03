@@ -200,3 +200,16 @@ let ``Test parsing date if only update date is available`` () =
     let expectedLast = Some(DateTime(2023, 2, 24, 8, 45, 28))
     let actualLast = result |> List.last
     Assert.True((expectedLast.Value - actualLast.PostDate.Value).TotalSeconds < 1.0)
+
+[<Fact>]
+let ``Test get content for article text if description is empty`` () =
+    let result = parseRssFromFile "data/rachel.xml"
+
+    let actualFirst = result |> List.head
+
+    let expectedText =
+        "Yeah, it's another thing about feed readers. I don't blame you if you want to skip this one. A reader (that is, a person!) reached out earlier and asked me to look at a bug report for a feed reader. It seems they passed along some of the details from one of my ear"
+            .Substring(0, ARTICLE_DESCRIPTION_LENGTH)
+        + "..."
+
+    Assert.Equal(expectedText, actualFirst.Text)
