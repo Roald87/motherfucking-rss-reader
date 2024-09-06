@@ -9,6 +9,7 @@ open System.Text
 open System.Web
 
 open RssParser
+open WebMarkupMin.Core
 
 open SimpleRssServer.Helper
 open SimpleRssServer.Logging
@@ -222,7 +223,10 @@ let handleRequest client (cacheLocation: string) (context: HttpListenerContext) 
             | "/sitemap.xml" -> File.ReadAllText(Path.Combine("site", "sitemap.xml"))
             | _ -> landingPage
 
-        let buffer = Encoding.UTF8.GetBytes(responseString)
+        let htmlMinifier = new HtmlMinifier()
+        let result = htmlMinifier.Minify(responseString, generateStatistics = false)
+
+        let buffer = Encoding.UTF8.GetBytes(result.MinifiedContent)
         context.Response.ContentLength64 <- int64 buffer.Length
         context.Response.ContentType <- "text/html"
 
