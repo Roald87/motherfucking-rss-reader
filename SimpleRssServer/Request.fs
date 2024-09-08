@@ -211,6 +211,12 @@ let assembleRssFeeds client cacheLocation query =
 
     homepage query items
 
+let formatErrors error =
+    error
+    |> Seq.map (fun (err: MinificationErrorInfo) ->
+        $"{err.Category} at l{err.LineNumber}:c{err.ColumnNumber}: {err.Message}.\n{err.SourceFragment}")
+    |> String.concat "\n"
+
 let handleRequest client (cacheLocation: string) (context: HttpListenerContext) =
     async {
         logger.LogInformation($"Received request {context.Request.Url}")
@@ -226,7 +232,20 @@ let handleRequest client (cacheLocation: string) (context: HttpListenerContext) 
         let htmlMinifier = new HtmlMinifier()
         let result = htmlMinifier.Minify(responseString, generateStatistics = false)
 
-        let buffer = Encoding.UTF8.GetBytes(result.MinifiedContent)
+        if result.Warnings.Count > 0 then
+            let warnings = formatErrors result.Warnings
+            logger.LogError($"Something went wrong with minifiying the HTML.\nWarnings:\n{warnings}")
+
+        if result.Errors.Count > 0 then
+            let errors = formatErrors result.Errors
+            logger.LogError($"Something went wrong with minifiying the HTML.\nErrors: {errors}")
+
+        let buffer =
+            if result.MinifiedContent.Length > 0 then
+                Encoding.UTF8.GetBytes(result.MinifiedContent)
+            else
+                Encoding.UTF8.GetBytes(responseString)
+
         context.Response.ContentLength64 <- int64 buffer.Length
         context.Response.ContentType <- "text/html"
 
