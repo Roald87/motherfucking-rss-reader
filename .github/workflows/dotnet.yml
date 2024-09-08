@@ -20,10 +20,8 @@ jobs:
     steps:
     - name: Set locale to US
       run: |
-          echo "Current locale"
-          locale
-          sudo locale-gen en_US.UTF-8
-          sudo update-locale LANG=en_US.UTF-8
+        sudo locale-gen en_US.UTF-8
+        sudo update-locale LANG=en_US.UTF-8
     - uses: actions/checkout@v4
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
