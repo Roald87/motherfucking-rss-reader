@@ -10,6 +10,7 @@ open Xunit
 
 open SimpleRssServer.Helper
 open SimpleRssServer.Request
+open SimpleRssServer.RssParser
 
 [<Fact>]
 let ``Test getRequestInfo`` () =
@@ -235,3 +236,25 @@ let ``Test fetchWithCache with existing cache more than 1 hour old and 304 respo
     // Clean up
     if File.Exists(filePath) then
         File.Delete(filePath)
+
+[<Fact>]
+let ``Test Html encoding of special characters`` () =
+    let expected =
+        """
+    <div class="feed-item">
+        <h2><a href="https://rachelbythebay.com/w/2024/02/24/signext/" target="_blank">1 &lt;&lt; n vs. 1U &lt;&lt; n and a cell phone autofocus problem</a></h2>
+        <div class="source-date">rachelbythebay.com on Sunday, February 25, 2024</div>
+        <p>Maybe 15 years ago, &amp; I heard that a certain cell phone camera would lose the ability to autofocus for about two weeks, then it would go back to working for another two weeks, and so on. It had something to do with the time ( since the epoch), the bits in u...</p>
+    </div>
+    """
+
+    let actual =
+        { Title = "1 << n vs. 1U << n and a cell phone autofocus problem"
+          Text =
+            "Maybe 15 years ago, & I heard that a certain cell phone camera would lose the ability to autofocus for about two weeks, then it would go back to working for another two weeks, and so on. It had something to do with the time ( since the epoch), the bits in u..."
+          PostDate = Some(DateTime(2024, 02, 25))
+          Url = "https://rachelbythebay.com/w/2024/02/24/signext/"
+          BaseUrl = "rachelbythebay.com" }
+        |> convertArticleToHtml
+
+    Assert.Equal(expected, actual)
