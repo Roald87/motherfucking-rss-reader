@@ -9,12 +9,19 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  LANG: "en_US.UTF-8"
+
 jobs:
   build:
 
     runs-on: ubuntu-latest
 
     steps:
+    - name: Set locale to US
+      run: |
+        sudo locale-gen en_US.UTF-8
+        sudo update-locale LANG=en_US.UTF-8
     - uses: actions/checkout@v4
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
