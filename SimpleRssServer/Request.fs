@@ -117,7 +117,7 @@ let convertArticleToHtml article =
     <div class="feed-item">
         <h2><a href="%s{article.Url}" target="_blank">%s{article.Title |> WebUtility.HtmlEncode}</a></h2>
         <div class="source-date">%s{article.BaseUrl} %s{date}</div>
-        <p>%s{article.Text |> WebUtility.HtmlEncode}</p>
+        <p>%s{article.Text}</p>
     </div>
     """
 
