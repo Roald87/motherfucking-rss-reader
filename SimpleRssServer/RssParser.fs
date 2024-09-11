@@ -3,7 +3,7 @@ module SimpleRssServer.RssParser
 open System
 open System.IO
 
-open CodeHollow.FeedReader
+open Roald87.FeedReader
 
 open SimpleRssServer.Helper
 

@@ -11,12 +11,12 @@
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CodeHollow.FeedReader" Version="1.2.6" />
     <Content Include="site/*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
+    <PackageReference Include="Roald87.FeedReader" Version="2.0.0-beta" />
     <PackageReference Include="WebMarkupMin.Core" Version="2.17.0" />
   </ItemGroup>
 </Project>

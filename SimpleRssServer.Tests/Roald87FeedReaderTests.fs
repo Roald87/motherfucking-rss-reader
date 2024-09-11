@@ -1,12 +1,12 @@
-module SimpleRssServer.Tests.CodeHollowFeedReaderTests
+module SimpleRssServer.Tests.Roald87FeedReaderTests
 
 open System
 
-open CodeHollow.FeedReader
+open Roald87.FeedReader
 open Xunit
 
 [<Fact>]
-let ``test CodeHollow.FeedReader with roaldinch`` () =
+let ``test Roald87.FeedReader with roaldinch`` () =
     let feed = FeedReader.ReadFromFile("data/roaldinch.xml")
 
     Assert.Equal(10, feed.Items.Count)
@@ -20,7 +20,7 @@ let ``test CodeHollow.FeedReader with roaldinch`` () =
     )
 
 [<Fact>]
-let ``test CodeHollow.FeedReader with zoesklot`` () =
+let ``test Roald87.FeedReader with zoesklot`` () =
     let feed = FeedReader.ReadFromFile("data/zoesklot.xml")
 
     Assert.Equal(5, feed.Items.Count)
@@ -35,7 +35,7 @@ let ``test CodeHollow.FeedReader with zoesklot`` () =
     )
 
 [<Fact>]
-let ``test CodeHollow.FeedReader with spectrum`` () =
+let ``test Roald87.FeedReader with spectrum`` () =
     // https://spectrum.ieee.org/feeds/feed.rss
     let feed = FeedReader.ReadFromFile("data/spectrum.rss")
 
@@ -43,9 +43,22 @@ let ``test CodeHollow.FeedReader with spectrum`` () =
     Assert.Equal("Quantum Cryptography Has Everyone Scrambling", feed.Items[0].Title)
 
 [<Fact>]
-let ``test CodeHollow.FeedReader with quanta`` () =
+let ``test Roald87.FeedReader with quanta`` () =
     // https://www.quantamagazine.org/feed/
     let feed = FeedReader.ReadFromFile("data/quanta.xml")
 
     Assert.Equal(5, feed.Items.Count)
     Assert.Equal("Physicists Pinpoint the Quantum Origin of the Greenhouse Effect", feed.Items[0].Title)
+
+
+[<Fact>]
+let ``test Roald87.FeedReader with nature content`` () =
+    // http://feeds.nature.com/nature/rss/current
+    let feed = FeedReader.ReadFromFile("data/nature.rss")
+
+    Assert.Equal(75, feed.Items.Count)
+
+    Assert.Equal(
+        """<p>Nature, Published online: 20 August 2024; <a href="https://www.nature.com/articles/s41586-024-07956-2">doi:10.1038/s41586-024-07956-2</a></p>Author Correction: Anti-TIGIT antibody improves PD-L1 blockade through myeloid and T<sub>reg</sub> cells""",
+        feed.Items[0].Content
+    )
