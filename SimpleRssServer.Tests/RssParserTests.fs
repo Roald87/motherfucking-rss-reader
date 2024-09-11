@@ -141,7 +141,8 @@ let ``Test parseRss with nature.rss`` () =
             "Author Correction: Anti-TIGIT antibody improves PD-L1 blockade through myeloid and T<sub>reg</sub> cells"
           Url = "https://www.nature.com/articles/s41586-024-07956-2"
           BaseUrl = "nature.com"
-          Text = "" }
+          Text =
+            "Nature, Published online: 20 August 2024; doi:10.1038/s41586-024-07956-2Author Correction: Anti-TIGIT antibody improves PD-L1 blockade through myeloid and Treg cells" }
 
     let actualFirst = result |> List.head
 
@@ -150,7 +151,8 @@ let ``Test parseRss with nature.rss`` () =
           Title = "Stonehenge’s enigmatic centre stone was hauled 800 kilometres from Scotland"
           Url = "https://www.nature.com/articles/d41586-024-02584-2"
           BaseUrl = "nature.com"
-          Text = "" }
+          Text =
+            "Nature, Published online: 14 August 2024; doi:10.1038/d41586-024-02584-2By assessing the age of ancient crystals, researchers have traced the monument’s greenish Altar Stone to a northern rock basin." }
 
     let actualLast = result |> List.last
 
