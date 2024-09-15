@@ -261,26 +261,16 @@ let handleRequest client (cacheLocation: string) (context: HttpListenerContext) 
 
         let responseString =
             match context.Request.RawUrl with
-            | Prefix "/config.html" _ -> configPage context.Request.Url.Query
-            | Prefix "/?rss=" _ -> assembleRssFeeds client cacheLocation context.Request.Url.Query
-            | "/robots.txt" -> File.ReadAllText(Path.Combine("site", "robots.txt"))
-            | "/sitemap.xml" -> File.ReadAllText(Path.Combine("site", "sitemap.xml"))
-            | _ -> landingPage
-
-        let htmlMinifier = new HtmlMinifier()
-        let result = htmlMinifier.Minify(responseString, generateStatistics = false)
-
-        if result.Warnings.Count > 0 then
-            let warnings = formatErrors result.Warnings
-            logger.LogError($"Something went wrong with minifiying the HTML.\nWarnings:\n{warnings}")
-
-        if result.Errors.Count > 0 then
-            let errors = formatErrors result.Errors
-            logger.LogError($"Something went wrong with minifiying the HTML.\nErrors: {errors}")
+            | Prefix "/config.html" _ -> configPage context.Request.Url.Query |> Html
+            | Prefix "/?rss=" _ -> assembleRssFeeds client cacheLocation context.Request.Url.Query |> Html
+            | "/robots.txt" -> File.ReadAllText(Path.Combine("site", "robots.txt")) |> Txt
+            | "/sitemap.xml" -> File.ReadAllText(Path.Combine("site", "sitemap.xml")) |> Xml
+            | _ -> landingPage |> Html
 
         let buffer =
-            if result.MinifiedContent.Length > 0 then
-                Encoding.UTF8.GetBytes(result.MinifiedContent)
+            let result = responseString |> minifyContent
+            if result.Length > 0 then
+                Encoding.UTF8.GetBytes(result)
             else
                 Encoding.UTF8.GetBytes(responseString)
 
