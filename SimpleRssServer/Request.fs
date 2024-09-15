@@ -115,9 +115,30 @@ let fetchAllRssFeeds client (cacheLocation: string) (urls: string list) =
     |> Async.RunSynchronously
 
 let updateRequestLog (filename: string) (retention: TimeSpan) (urls: string list) =
-    let currentDate = DateTime.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
-    let logEntries = urls |> List.map (fun url -> $"{currentDate} {url}")
-    File.AppendAllLines(filename, logEntries)
+    logger.LogInformation($"Updating request log {filename} with retention {retention.ToString()}")
+    let currentDate = DateTime.Now
+
+    let currentDateString =
+        currentDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+
+    let logEntries = urls |> List.map (fun url -> $"{currentDateString} {url}")
+
+    let existingEntries =
+        if File.Exists(filename) then
+            File.ReadAllLines(filename)
+            |> Array.toList
+            |> List.filter (fun line ->
+                let datePart = line.Split(' ').[0]
+
+                let entryDate =
+                    DateTime.ParseExact(datePart, "yyyy-MM-dd", CultureInfo.InvariantCulture)
+
+                (currentDate - entryDate) <= retention)
+        else
+            []
+
+    let updatedEntries = List.append existingEntries logEntries
+    File.WriteAllLines(filename, updatedEntries)
 
 let convertArticleToHtml article =
     let date =

@@ -14,10 +14,38 @@ open SimpleRssServer.Request
 open SimpleRssServer.RssParser
 
 [<Fact>]
+let ``Test updateRequestLog removes entries older than retention period`` () =
+    let filename = "test_log_retention.txt"
+    let retention = TimeSpan.FromDays(7.0)
+
+    let oldDate =
+        DateTime.Now.AddDays(-8.0).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+
+    let recentDate =
+        DateTime.Now.AddDays(-3.0).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+
+    let oldEntry = $"{oldDate} OldEntry"
+    let recentEntry = $"{recentDate} RecentEntry"
+
+    File.WriteAllLines(filename, [ oldEntry; recentEntry ])
+
+    updateRequestLog filename retention [ "NewEntry" ]
+
+    let fileContent = File.ReadAllLines(filename)
+
+    Assert.DoesNotContain(oldEntry, fileContent)
+    Assert.Contains(recentEntry, fileContent[0])
+    Assert.Contains("NewEntry", fileContent[1])
+
+    if File.Exists(filename) then
+        File.Delete(filename)
+
+[<Fact>]
 let ``Test updateRequestLog creates file and appends strings with datetime`` () =
     let filename = "test_log.txt"
     let logEntries = [ "Entry1"; "Entry2"; "Entry3" ]
     let retention = TimeSpan(1)
+
     if File.Exists(filename) then
         File.Delete(filename)
 
@@ -34,6 +62,7 @@ let ``Test updateRequestLog creates file and appends strings with datetime`` () 
     if File.Exists(filename) then
         File.Delete(filename)
 
+[<Fact>]
 let ``Minify Xml removes new lines`` () =
     let content = "<root>\n\t<child>Value</child>\n</root>" |> Xml
 
