@@ -144,6 +144,7 @@ let requestUrls logPath =
     if File.Exists(logPath) then
         File.ReadAllLines(logPath)
         |> Array.map (fun line -> line.Split(' ').[1])
+        |> Array.distinct
         |> Array.toList
     else
         []

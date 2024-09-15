@@ -12,6 +12,17 @@ open Xunit
 open SimpleRssServer.Helper
 open SimpleRssServer.Request
 open SimpleRssServer.RssParser
+open SimpleRssServer.Request
+
+[<Fact>]
+let ``Test requestUrls returns two URLs from request-log.txt`` () =
+    let logFilePath = "data/request-log.txt"
+
+    let urls = requestUrls logFilePath
+
+    Assert.Equal(2, List.length urls)
+    Assert.Contains("https://example.com/feed1", urls)
+    Assert.Contains("https://example.com/feed2", urls)
 
 [<Fact>]
 let ``Test updateRequestLog removes entries older than retention period`` () =
