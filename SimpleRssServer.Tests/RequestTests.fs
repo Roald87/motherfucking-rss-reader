@@ -4,6 +4,7 @@ open System
 open System.IO
 open System.Net
 open System.Net.Http
+open System.Globalization
 open System.Threading.Tasks
 
 open Xunit
@@ -13,6 +14,32 @@ open SimpleRssServer.Request
 open SimpleRssServer.RssParser
 
 [<Fact>]
+let ``Test updateRequestLog creates file and appends strings with datetime`` () =
+    let filename = "test_log.txt"
+    let logEntries = [ "Entry1"; "Entry2"; "Entry3" ]
+
+    // Ensure the file does not exist before the test
+    if File.Exists(filename) then
+        File.Delete(filename)
+
+    // Call the method to test
+    updateRequestLog filename logEntries
+
+    // Verify the file is created
+    Assert.True(File.Exists(filename), "Expected log file to be created")
+
+    // Read the file content
+    let fileContent = File.ReadAllText(filename)
+
+    // Verify each log entry is appended with the current datetime
+    let currentDate = DateTime.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+    logEntries |> List.iter (fun entry ->
+        Assert.Contains($"{currentDate} {entry}", fileContent)
+    )
+
+    // Clean up
+    if File.Exists(filename) then
+        File.Delete(filename)
 let ``Minify Xml removes new lines`` () =
     let content = "<root>\n\t<child>Value</child>\n</root>" |> Xml
 
