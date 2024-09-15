@@ -14,6 +14,7 @@ open WebMarkupMin.Core
 
 open SimpleRssServer.Helper
 open SimpleRssServer.Logging
+open System.Globalization
 
 type Filetype =
     | Xml of string
@@ -113,8 +114,10 @@ let fetchAllRssFeeds client (cacheLocation: string) (urls: string list) =
     |> Async.Parallel
     |> Async.RunSynchronously
 
-
-let updateRequestLog (filename: string) (urls: string list) = ()
+let updateRequestLog (filename: string) (urls: string list) =
+    let currentDate = DateTime.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+    let logEntries = urls |> List.map (fun url -> $"{currentDate} {url}")
+    File.AppendAllLines(filename, logEntries)
 
 let convertArticleToHtml article =
     let date =
