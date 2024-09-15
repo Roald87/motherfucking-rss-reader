@@ -225,6 +225,13 @@ let formatErrors error =
         $"{err.Category} at l{err.LineNumber}:c{err.ColumnNumber}: {err.Message}.\n{err.SourceFragment}")
     |> String.concat "\n"
 
+let minifyContent (filetype: Filetype) : string =
+    // Placeholder for the actual implementation
+    match filetype with
+    | Txt t -> t
+    | Html h -> h
+    | Xml x -> x
+
 let handleRequest client (cacheLocation: string) (context: HttpListenerContext) =
     async {
         logger.LogInformation($"Received request {context.Request.Url}")
