@@ -140,6 +140,14 @@ let updateRequestLog (filename: string) (retention: TimeSpan) (urls: string list
     let updatedEntries = List.append existingEntries logEntries
     File.WriteAllLines(filename, updatedEntries)
 
+let requestUrls logPath =
+    if File.Exists(logPath) then
+        File.ReadAllLines(logPath)
+        |> Array.map (fun line -> line.Split(' ').[1])
+        |> Array.toList
+    else
+        []
+
 let convertArticleToHtml article =
     let date =
         if article.PostDate.IsSome then

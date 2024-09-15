@@ -10,16 +10,10 @@ type Milisecond = Milisecond of int
 let updateRssFeedsPeriodically client cacheDir (period: Milisecond) =
     async {
         while true do
-            let urls =
-                if File.Exists(requestLogPath) then
-                    File.ReadAllLines(requestLogPath)
-                    |> Array.map (fun line -> line.Split(' ').[1])
-                    |> Array.toList
-                else
-                    []
+            let urls = requestUrls requestLogPath
 
             if urls.Length > 0 then
-                logger.LogDebug("Fetching RSS feeds for URLs: {Urls}", String.concat ", " urls)
+                logger.LogDebug($"Periodically updating {urls.Length} RSS feeds.")
                 fetchAllRssFeeds client cacheDir urls |> ignore
 
             let (Milisecond t) = period
@@ -42,7 +36,7 @@ let startServer cacheDir (prefixes: string list) =
             return! loop ()
         }
 
-    Async.Start(updateRssFeedsPeriodically httpClient cacheDir (Milisecond(1000 * 60 * 60)))
+    Async.Start(updateRssFeedsPeriodically httpClient cacheDir (Milisecond(1000 * 10)))
     loop ()
 
 [<EntryPoint>]
