@@ -240,7 +240,11 @@ let minifyContent (filetype: Filetype) : string =
             let errors = formatErrors result.Errors
             logger.LogError($"Something went wrong with minifiying the HTML.\nErrors: {errors}")
 
-        result.MinifiedContent
+        // In case something went wrong the minified content is empty
+        if result.MinifiedContent.Length = 0 then
+            h
+        else
+            result.MinifiedContent
     | Xml x ->
         let minifier = new XmlMinifier()
         let result = minifier.Minify(x, generateStatistics = false)
@@ -253,6 +257,10 @@ let minifyContent (filetype: Filetype) : string =
             let errors = formatErrors result.Errors
             logger.LogError($"Something went wrong with minifiying the XML.\nErrors: {errors}")
 
+        // // In case something went wrong the minified content is empty
+        // if result.MinifiedContent.Length = 0 then
+        //     x
+        // else
         result.MinifiedContent
 
 let handleRequest client (cacheLocation: string) (context: HttpListenerContext) =
@@ -269,10 +277,10 @@ let handleRequest client (cacheLocation: string) (context: HttpListenerContext) 
 
         let buffer =
             let result = responseString |> minifyContent
-            if result.Length > 0 then
-                Encoding.UTF8.GetBytes(result)
-            else
-                Encoding.UTF8.GetBytes(responseString)
+            // if result.Length > 0 then
+            Encoding.UTF8.GetBytes(result)
+        // else
+        // Encoding.UTF8.GetBytes(responseString)
 
         context.Response.ContentLength64 <- int64 buffer.Length
         context.Response.ContentType <- "text/html"
