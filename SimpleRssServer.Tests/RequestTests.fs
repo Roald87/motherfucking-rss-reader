@@ -13,6 +13,14 @@ open SimpleRssServer.Request
 open SimpleRssServer.RssParser
 
 [<Fact>]
+let ``Minify Xml removes new lines`` () =
+    let content = "<root>\n\t<child>Value</child>\n</root>" |> Xml
+
+    let actual = minifyContent content
+    let expectedContent = "<root><child>Value</child></root>"
+
+    Assert.Equal(expectedContent, actual)
+
 let ``Minify Txt returns the same content`` () =
     let content = "This is\nplain text content." |> Txt
 

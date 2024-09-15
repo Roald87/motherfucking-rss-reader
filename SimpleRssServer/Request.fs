@@ -241,7 +241,19 @@ let minifyContent (filetype: Filetype) : string =
             logger.LogError($"Something went wrong with minifiying the HTML.\nErrors: {errors}")
 
         result.MinifiedContent
-    | Xml x -> x
+    | Xml x ->
+        let minifier = new XmlMinifier()
+        let result = minifier.Minify(x, generateStatistics = false)
+
+        if result.Warnings.Count > 0 then
+            let warnings = formatErrors result.Warnings
+            logger.LogError($"Something went wrong with minifiying the XML.\nWarnings:\n{warnings}")
+
+        if result.Errors.Count > 0 then
+            let errors = formatErrors result.Errors
+            logger.LogError($"Something went wrong with minifiying the XML.\nErrors: {errors}")
+
+        result.MinifiedContent
 
 let handleRequest client (cacheLocation: string) (context: HttpListenerContext) =
     async {
