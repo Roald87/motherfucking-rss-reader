@@ -41,11 +41,17 @@ let ``Minify Html removes new lines`` () =
     Assert.Equal(expectedContent, actual)
 
 [<Fact>]
-let ``If minifying fails, return original content`` () =
+let ``If minifying html fails, return original content`` () =
     let content = "<p>1 << n vs</p>"
-
     let actual = minifyContent (Html content)
-    // Minifier also removes optional end tags
+
+    Assert.Equal(content, actual)
+
+
+[<Fact>]
+let ``If minifying xml fails, return original content`` () =
+    let content = "<xml>test</p>"
+    let actual = minifyContent (Xml content)
 
     Assert.Equal(content, actual)
 

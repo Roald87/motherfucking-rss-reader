@@ -257,11 +257,11 @@ let minifyContent (filetype: Filetype) : string =
             let errors = formatErrors result.Errors
             logger.LogError($"Something went wrong with minifiying the XML.\nErrors: {errors}")
 
-        // // In case something went wrong the minified content is empty
-        // if result.MinifiedContent.Length = 0 then
-        //     x
-        // else
-        result.MinifiedContent
+        // In case something went wrong the minified content is empty
+        if result.MinifiedContent.Length = 0 then
+            x
+        else
+            result.MinifiedContent
 
 let handleRequest client (cacheLocation: string) (context: HttpListenerContext) =
     async {
