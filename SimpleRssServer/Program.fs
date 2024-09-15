@@ -36,7 +36,8 @@ let startServer cacheDir (prefixes: string list) =
             return! loop ()
         }
 
-    Async.Start(updateRssFeedsPeriodically httpClient cacheDir (Milisecond(1000 * 10)))
+    let oneHour = Milisecond(1000 * 10 * 60 * 60)
+    Async.Start(updateRssFeedsPeriodically httpClient cacheDir oneHour)
     loop ()
 
 [<EntryPoint>]
