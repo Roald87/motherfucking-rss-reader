@@ -13,6 +13,14 @@ open SimpleRssServer.Request
 open SimpleRssServer.RssParser
 
 [<Fact>]
+let ``Minify Txt returns the same content`` () =
+    let content = "This is\nplain text content." |> Txt
+
+    let actual = minifyContent content
+    let expectedContent = "This is\nplain text content."
+
+    Assert.Equal(expectedContent, actual)
+
 let ``Minify Html removes new lines`` () =
     let content = "<html>\n\t<body>\n\t\t<p>Hello World</p>\n\t</body>\n</html>" |> Html
 
