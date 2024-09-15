@@ -12,6 +12,26 @@ open SimpleRssServer.Helper
 open SimpleRssServer.Request
 open SimpleRssServer.RssParser
 
+type Filetype =
+    | Xml of string
+    | Html of string
+    | Txt of string
+
+let minifyFiletype (filetype: Filetype) : Filetype =
+    // Placeholder for the actual implementation
+    filetype
+
+[<Fact>]
+let ``Minify Html removes new lines`` () =
+    let htmlContent = "<html>\n<body>\n<p>Hello World</p>\n</body>\n</html>"
+    let expectedContent = "<html><body><p>Hello World</p></body></html>"
+    let filetype = Html htmlContent
+    let minifiedFiletype = minifyFiletype filetype
+
+    match minifiedFiletype with
+    | Html content -> Assert.Equal(expectedContent, content)
+    | _ -> Assert.True(false, "Expected Html type")
+
 [<Fact>]
 let ``Test getRequestInfo`` () =
     let result = getRssUrls "?rss=https://abs.com/test"
