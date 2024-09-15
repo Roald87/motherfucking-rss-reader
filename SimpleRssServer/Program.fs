@@ -5,6 +5,21 @@ open System.Net
 open SimpleRssServer.Logging
 open SimpleRssServer.Request
 
+type Milisecond = Milisecond of int
+
+let updateRssFeedsPeriodically client cacheDir (period: Milisecond) =
+    async {
+        while true do
+            let urls = requestUrls requestLogPath
+
+            if urls.Length > 0 then
+                logger.LogDebug($"Periodically updating {urls.Length} RSS feeds.")
+                fetchAllRssFeeds client cacheDir urls |> ignore
+
+            let (Milisecond t) = period
+            do! Async.Sleep(t)
+    }
+
 let startServer cacheDir (prefixes: string list) =
     let listener = new HttpListener()
     prefixes |> List.iter listener.Prefixes.Add
@@ -21,6 +36,8 @@ let startServer cacheDir (prefixes: string list) =
             return! loop ()
         }
 
+    let oneHour = Milisecond(1000 * 10 * 60 * 60)
+    Async.Start(updateRssFeedsPeriodically httpClient cacheDir oneHour)
     loop ()
 
 [<EntryPoint>]

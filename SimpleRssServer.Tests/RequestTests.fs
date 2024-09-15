@@ -4,6 +4,7 @@ open System
 open System.IO
 open System.Net
 open System.Net.Http
+open System.Globalization
 open System.Threading.Tasks
 
 open Xunit
@@ -11,6 +12,65 @@ open Xunit
 open SimpleRssServer.Helper
 open SimpleRssServer.Request
 open SimpleRssServer.RssParser
+
+[<Fact>]
+let ``Test requestUrls returns two URLs from request-log.txt`` () =
+    let logFilePath = "data/request-log.txt"
+
+    let urls = requestUrls logFilePath
+
+    Assert.Equal(2, List.length urls)
+    Assert.Contains("https://example.com/feed1", urls)
+    Assert.Contains("https://example.com/feed2", urls)
+
+[<Fact>]
+let ``Test updateRequestLog removes entries older than retention period`` () =
+    let filename = "test_log_retention.txt"
+    let retention = TimeSpan.FromDays(7.0)
+
+    let oldDate =
+        DateTime.Now.AddDays(-8.0).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+
+    let recentDate =
+        DateTime.Now.AddDays(-3.0).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+
+    let oldEntry = $"{oldDate} OldEntry"
+    let recentEntry = $"{recentDate} RecentEntry"
+
+    File.WriteAllLines(filename, [ oldEntry; recentEntry ])
+
+    updateRequestLog filename retention [ "NewEntry" ]
+
+    let fileContent = File.ReadAllLines(filename)
+
+    Assert.DoesNotContain(oldEntry, fileContent)
+    Assert.Contains(recentEntry, fileContent[0])
+    Assert.Contains("NewEntry", fileContent[1])
+
+    if File.Exists(filename) then
+        File.Delete(filename)
+
+[<Fact>]
+let ``Test updateRequestLog creates file and appends strings with datetime`` () =
+    let filename = "test_log.txt"
+    let logEntries = [ "Entry1"; "Entry2"; "Entry3" ]
+    let retention = TimeSpan(1)
+
+    if File.Exists(filename) then
+        File.Delete(filename)
+
+    updateRequestLog filename retention logEntries
+    Assert.True(File.Exists(filename), "Expected log file to be created")
+
+    let fileContent = File.ReadAllText(filename)
+
+    let currentDate = DateTime.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+
+    logEntries
+    |> List.iter (fun entry -> Assert.Contains($"{currentDate} {entry}", fileContent))
+
+    if File.Exists(filename) then
+        File.Delete(filename)
 
 [<Fact>]
 let ``Minify Xml removes new lines`` () =

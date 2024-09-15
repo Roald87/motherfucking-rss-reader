@@ -14,6 +14,7 @@ open WebMarkupMin.Core
 
 open SimpleRssServer.Helper
 open SimpleRssServer.Logging
+open System.Globalization
 
 type Filetype =
     | Xml of string
@@ -113,6 +114,40 @@ let fetchAllRssFeeds client (cacheLocation: string) (urls: string list) =
     |> Async.Parallel
     |> Async.RunSynchronously
 
+let updateRequestLog (filename: string) (retention: TimeSpan) (urls: string list) =
+    logger.LogInformation($"Updating request log {filename} with retention {retention.ToString()}")
+    let currentDate = DateTime.Now
+
+    let currentDateString =
+        currentDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
+
+    let logEntries = urls |> List.map (fun url -> $"{currentDateString} {url}")
+
+    let existingEntries =
+        if File.Exists(filename) then
+            File.ReadAllLines(filename)
+            |> Array.toList
+            |> List.filter (fun line ->
+                let datePart = line.Split(' ').[0]
+
+                let entryDate =
+                    DateTime.ParseExact(datePart, "yyyy-MM-dd", CultureInfo.InvariantCulture)
+
+                (currentDate - entryDate) <= retention)
+        else
+            []
+
+    let updatedEntries = List.append existingEntries logEntries
+    File.WriteAllLines(filename, updatedEntries)
+
+let requestUrls logPath =
+    if File.Exists(logPath) then
+        File.ReadAllLines(logPath)
+        |> Array.map (fun line -> line.Split(' ').[1])
+        |> Array.distinct
+        |> Array.toList
+    else
+        []
 
 let convertArticleToHtml article =
     let date =
@@ -263,6 +298,9 @@ let minifyContent (filetype: Filetype) : string =
         else
             result.MinifiedContent
 
+let requestLogPath = "rss-cache/request-log.txt"
+let requestLogRetention = TimeSpan.FromDays(7)
+
 let handleRequest client (cacheLocation: string) (context: HttpListenerContext) =
     async {
         logger.LogInformation($"Received request {context.Request.Url}")
@@ -270,7 +308,14 @@ let handleRequest client (cacheLocation: string) (context: HttpListenerContext) 
         let responseString =
             match context.Request.RawUrl with
             | Prefix "/config.html" _ -> configPage context.Request.Url.Query |> Html
-            | Prefix "/?rss=" _ -> assembleRssFeeds client cacheLocation context.Request.Url.Query |> Html
+            | Prefix "/?rss=" _ ->
+                let rssUrls = getRssUrls context.Request.Url.Query
+
+                match rssUrls with
+                | Some urls -> updateRequestLog requestLogPath requestLogRetention urls
+                | None -> ()
+
+                assembleRssFeeds client cacheLocation context.Request.Url.Query |> Html
             | "/robots.txt" -> File.ReadAllText(Path.Combine("site", "robots.txt")) |> Txt
             | "/sitemap.xml" -> File.ReadAllText(Path.Combine("site", "sitemap.xml")) |> Xml
             | _ -> landingPage |> Html
