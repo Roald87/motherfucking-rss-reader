@@ -114,6 +114,8 @@ let fetchAllRssFeeds client (cacheLocation: string) (urls: string list) =
     |> Async.RunSynchronously
 
 
+let updateRequestLog (filename: string) (urls: string list) = ()
+
 let convertArticleToHtml article =
     let date =
         if article.PostDate.IsSome then
