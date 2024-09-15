@@ -12,7 +12,6 @@ open Xunit
 open SimpleRssServer.Helper
 open SimpleRssServer.Request
 open SimpleRssServer.RssParser
-open SimpleRssServer.Request
 
 [<Fact>]
 let ``Test requestUrls returns two URLs from request-log.txt`` () =
