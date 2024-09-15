@@ -226,10 +226,21 @@ let formatErrors error =
     |> String.concat "\n"
 
 let minifyContent (filetype: Filetype) : string =
-    // Placeholder for the actual implementation
     match filetype with
     | Txt t -> t
-    | Html h -> h
+    | Html h ->
+        let htmlMinifier = new HtmlMinifier()
+        let result = htmlMinifier.Minify(h, generateStatistics = false)
+
+        if result.Warnings.Count > 0 then
+            let warnings = formatErrors result.Warnings
+            logger.LogError($"Something went wrong with minifiying the HTML.\nWarnings:\n{warnings}")
+
+        if result.Errors.Count > 0 then
+            let errors = formatErrors result.Errors
+            logger.LogError($"Something went wrong with minifiying the HTML.\nErrors: {errors}")
+
+        result.MinifiedContent
     | Xml x -> x
 
 let handleRequest client (cacheLocation: string) (context: HttpListenerContext) =
