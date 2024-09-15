@@ -289,6 +289,9 @@ let minifyContent (filetype: Filetype) : string =
         else
             result.MinifiedContent
 
+let requestLogPath = "rss-cache/request-log.txt"
+let requestLogRetention = TimeSpan.FromDays(7)
+
 let handleRequest client (cacheLocation: string) (context: HttpListenerContext) =
     async {
         logger.LogInformation($"Received request {context.Request.Url}")
@@ -296,7 +299,14 @@ let handleRequest client (cacheLocation: string) (context: HttpListenerContext) 
         let responseString =
             match context.Request.RawUrl with
             | Prefix "/config.html" _ -> configPage context.Request.Url.Query |> Html
-            | Prefix "/?rss=" _ -> assembleRssFeeds client cacheLocation context.Request.Url.Query |> Html
+            | Prefix "/?rss=" _ ->
+                let rssUrls = getRssUrls context.Request.Url.Query
+
+                match rssUrls with
+                | Some urls -> updateRequestLog requestLogPath requestLogRetention urls
+                | None -> ()
+
+                assembleRssFeeds client cacheLocation context.Request.Url.Query |> Html
             | "/robots.txt" -> File.ReadAllText(Path.Combine("site", "robots.txt")) |> Txt
             | "/sitemap.xml" -> File.ReadAllText(Path.Combine("site", "sitemap.xml")) |> Xml
             | _ -> landingPage |> Html
