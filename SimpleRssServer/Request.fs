@@ -275,13 +275,7 @@ let handleRequest client (cacheLocation: string) (context: HttpListenerContext) 
             | "/sitemap.xml" -> File.ReadAllText(Path.Combine("site", "sitemap.xml")) |> Xml
             | _ -> landingPage |> Html
 
-        let buffer =
-            let result = responseString |> minifyContent
-            // if result.Length > 0 then
-            Encoding.UTF8.GetBytes(result)
-        // else
-        // Encoding.UTF8.GetBytes(responseString)
-
+        let buffer = responseString |> minifyContent |> Encoding.UTF8.GetBytes
         context.Response.ContentLength64 <- int64 buffer.Length
         context.Response.ContentType <- "text/html"
 
