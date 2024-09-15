@@ -17,11 +17,11 @@ open SimpleRssServer.RssParser
 let ``Test updateRequestLog creates file and appends strings with datetime`` () =
     let filename = "test_log.txt"
     let logEntries = [ "Entry1"; "Entry2"; "Entry3" ]
-
+    let retention = TimeSpan(1)
     if File.Exists(filename) then
         File.Delete(filename)
 
-    updateRequestLog filename logEntries
+    updateRequestLog filename retention logEntries
     Assert.True(File.Exists(filename), "Expected log file to be created")
 
     let fileContent = File.ReadAllText(filename)
