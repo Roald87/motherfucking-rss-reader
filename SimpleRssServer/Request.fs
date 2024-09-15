@@ -15,6 +15,11 @@ open WebMarkupMin.Core
 open SimpleRssServer.Helper
 open SimpleRssServer.Logging
 
+type Filetype =
+    | Xml of string
+    | Html of string
+    | Txt of string
+
 let convertUrlToValidFilename (url: string) : string =
     let replaceInvalidFilenameChars = RegularExpressions.Regex("[.?=:/]+")
     replaceInvalidFilenameChars.Replace(url, "_")
