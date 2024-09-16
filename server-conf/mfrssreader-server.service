@@ -3,7 +3,7 @@ Description=HTTP server for motherfucking RSS reader
 After=network.target
 
 [Service]
-ExecStart=/var/www/rss/SimpleRssServer http://localhost:8000/
+ExecStart=/bin/bash -c "/var/www/rss/SimpleRssServer http://localhost:8000/ 2> >(/usr/bin/ts '[%%Y-%%m-%%d %%H:%%M:%%S]' >&2) | /usr/bin/ts '[%%Y-%%m-%%d %%H:%%M:%%S]'"
 WorkingDirectory=/var/www/rss
 User=rss
 Group=1000
