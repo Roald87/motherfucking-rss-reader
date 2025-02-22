@@ -1,5 +1,7 @@
 # Motherfucking RSS reader
 
+> Archived: moved to safe for work and shorter domain [rssrdr.com](https://rssrdr.com) and [rssrdr repo](https://github.com/Roald87/rssrdr/).
+
 _A basic RSS reader, in the spirit of the motherfucking websites._
 
 An RSS reader without:
